@@ -129,7 +129,7 @@ class Game:
                 # elif keys[pygame.K_DOWN]:
                 #     self.menu_state += 1
 
-                self.draw_main_menu()
+            self.draw_main_menu()
             # elif self.state == PLAY:
             #     self.draw_play()
             #     if not self.game_over:
