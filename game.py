@@ -65,8 +65,9 @@ class Game:
         self.keep_running: bool = True
         self.game_over: bool = False
         self.state: int = MAIN_MENU
-        # self.state = PLAY
         self.menu_state: int = PLAY
+
+        self.score: int = 0
 
         self.player: Player = Player(
             self.player_rocket,
@@ -88,19 +89,12 @@ class Game:
         while self.keep_running:
             clock.tick(self.framerate)
 
-            # if not self.game_over:
-
-            #     for bullet in self.player.bullets:
-            #         bullet.move()
-
             keys: pygame.key = pygame.key.get_pressed()
 
             if keys[pygame.K_ESCAPE]:
                 self.keep_running = False
-            if keys[pygame.K_BACKSPACE]:
-                self.player.kill()
-
-                # self.player.shoot()  # This is a temporary solution to test the bullets
+            # if keys[pygame.K_BACKSPACE]:
+            #     self.player.kill()
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -111,39 +105,31 @@ class Game:
                             self.menu_state -= 1
                         elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
                             self.menu_state += 1
+                        elif event.key == pygame.K_p:
+                            self.state = PLAY
+                        elif event.key == pygame.K_h:
+                            self.state = HIGHSCORES
+                        elif event.key == pygame.K_f:
+                            self.state = PROFILE
+                        elif event.key == pygame.K_q:
+                            self.keep_running = False
+                        elif (
+                            event.key == pygame.K_RETURN or event.key == pygame.K_SPACE
+                        ):
+                            self.state = self.menu_state
                     if self.menu_state < PLAY:
                         self.menu_state = QUIT
                     elif self.menu_state > QUIT:
                         self.menu_state = PLAY
 
-                # if event.type == pygame.KEYDOWN:
-                #     if event.key == pygame.K_SPACE:
-                #         if not self.game_over:
-                #             self.player.shoot()
                 if not self.player.alive():
-                    # self.keep_running = False
+                    self.keep_running = False
                     self.game_over = True
 
-                # if keys[pygame.K_UP]:
-                #     self.menu_state -= 1
-                # elif keys[pygame.K_DOWN]:
-                #     self.menu_state += 1
-
-            self.draw_main_menu()
-            # elif self.state == PLAY:
-            #     self.draw_play()
-            #     if not self.game_over:
-            #         if keys[pygame.K_UP] or keys[pygame.K_w]:
-            #             self.player.move_forward()
-            #         if keys[pygame.K_LEFT] or keys[pygame.K_a]:
-            #             self.player.turn_left()
-            #         if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
-            #             self.player.turn_right()
-
-        # [P] PLAY
-        # [H] HIGHSCORES
-        # [F] PROFILE
-        # [Q] QUIT
+            if self.state == MAIN_MENU:
+                self.draw_main_menu()
+            elif self.state == PLAY:
+                self.draw_play()
 
         if self.game_over:
             print("💥 Game Over!")
@@ -156,9 +142,9 @@ class Game:
         resized_image = pygame.transform.scale(
             self.menu_background, (self.screen_width, self.screen_height)
         )
-        self.win.blit(resized_image, (self.menu_background_offset, 0))
+        self.win.blit(resized_image, (0, self.menu_background_offset))
         self.win.blit(
-            resized_image, (self.screen_width + self.menu_background_offset, 0)
+            resized_image, (0, self.menu_background_offset - self.screen_height)
         )
         self.win.blit(self.main_menu_border, (0, 0))
         if self.menu_state == PLAY:
@@ -171,8 +157,8 @@ class Game:
             self.win.blit(self.main_menu_quit_selected, (0, 0))
 
         pygame.display.update()
-        self.menu_background_offset -= 1
-        if self.menu_background_offset < -self.screen_width:
+        self.menu_background_offset += 1
+        if self.menu_background_offset > self.screen_height:
             self.menu_background_offset = 0
 
     def draw_play(self: object) -> None:
@@ -180,9 +166,6 @@ class Game:
 
         self.player.draw(self.win)
         self.draw_score()
-
-        # for bullet in self.player.bullets:
-        # bullet.draw(self.win)
 
         if self.game_over:
             self.game_over_screen()
@@ -193,10 +176,11 @@ class Game:
         self.win.blit(self.game_over_image, (0, 0))
 
     def draw_score(self: object) -> None:
-        foo: str = "Score: 0"
+        score_text: str = f"Score: {self.score}"
 
-        text: pygame.Surface = self.main_font.render(foo, ANTIALIAS, WHITE_COLOR)
+        text: pygame.Surface = self.main_font.render(score_text, ANTIALIAS, WHITE_COLOR)
         text_rect: pygame.Rect = text.get_rect()
         text_rect.center = (SCORE_X, SCORE_Y)
 
         self.win.blit(text, text_rect)
+        self.score += 1
