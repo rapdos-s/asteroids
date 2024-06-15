@@ -30,6 +30,12 @@ class Game:
         player_rocket: pygame.Surface,
         game_over: pygame.Surface,
         menu_background: pygame.Surface,
+        main_menu_border: pygame.Surface,
+        main_menu_none_selected: pygame.Surface,
+        main_menu_play_selected: pygame.Surface,
+        main_menu_highscore_selected: pygame.Surface,
+        main_menu_profile_selected: pygame.Surface,
+        main_menu_quit_selected: pygame.Surface,
         main_font: pygame.font.Font,
     ) -> None:
 
@@ -39,7 +45,14 @@ class Game:
         self.background_image: pygame.Surface = background_image
         self.player_rocket: pygame.Surface = player_rocket
         self.game_over_image: pygame.Surface = game_over
+
         self.menu_background: pygame.Surface = menu_background
+        self.main_menu_border: pygame.Surface = main_menu_border
+        self.main_menu_none_selected: pygame.Surface = main_menu_none_selected
+        self.main_menu_play_selected: pygame.Surface = main_menu_play_selected
+        self.main_menu_highscore_selected: pygame.Surface = main_menu_highscore_selected
+        self.main_menu_profile_selected: pygame.Surface = main_menu_profile_selected
+        self.main_menu_quit_selected: pygame.Surface = main_menu_quit_selected
 
         self.menu_background_offset: int = 0
 
@@ -52,7 +65,8 @@ class Game:
         self.keep_running: bool = True
         self.game_over: bool = False
         self.state: int = MAIN_MENU
-        self.state = PLAY
+        # self.state = PLAY
+        self.menu_state: int = PLAY
 
         self.player: Player = Player(
             self.player_rocket,
@@ -91,6 +105,17 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.keep_running = False
+                if self.state == MAIN_MENU:
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_UP or event.key == pygame.K_w:
+                            self.menu_state -= 1
+                        elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
+                            self.menu_state += 1
+                    if self.menu_state < PLAY:
+                        self.menu_state = QUIT
+                    elif self.menu_state > QUIT:
+                        self.menu_state = PLAY
+
                 # if event.type == pygame.KEYDOWN:
                 #     if event.key == pygame.K_SPACE:
                 #         if not self.game_over:
@@ -99,17 +124,21 @@ class Game:
                     # self.keep_running = False
                     self.game_over = True
 
-            if self.state == MAIN_MENU:
+                # if keys[pygame.K_UP]:
+                #     self.menu_state -= 1
+                # elif keys[pygame.K_DOWN]:
+                #     self.menu_state += 1
+
                 self.draw_main_menu()
-            elif self.state == PLAY:
-                self.draw_play()
-                if not self.game_over:
-                    if keys[pygame.K_UP] or keys[pygame.K_w]:
-                        self.player.move_forward()
-                    if keys[pygame.K_LEFT] or keys[pygame.K_a]:
-                        self.player.turn_left()
-                    if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
-                        self.player.turn_right()
+            # elif self.state == PLAY:
+            #     self.draw_play()
+            #     if not self.game_over:
+            #         if keys[pygame.K_UP] or keys[pygame.K_w]:
+            #             self.player.move_forward()
+            #         if keys[pygame.K_LEFT] or keys[pygame.K_a]:
+            #             self.player.turn_left()
+            #         if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+            #             self.player.turn_right()
 
         # [P] PLAY
         # [H] HIGHSCORES
@@ -128,8 +157,23 @@ class Game:
             self.menu_background, (self.screen_width, self.screen_height)
         )
         self.win.blit(resized_image, (self.menu_background_offset, 0))
+        self.win.blit(
+            resized_image, (self.screen_width + self.menu_background_offset, 0)
+        )
+        self.win.blit(self.main_menu_border, (0, 0))
+        if self.menu_state == PLAY:
+            self.win.blit(self.main_menu_play_selected, (0, 0))
+        elif self.menu_state == HIGHSCORES:
+            self.win.blit(self.main_menu_highscore_selected, (0, 0))
+        elif self.menu_state == PROFILE:
+            self.win.blit(self.main_menu_profile_selected, (0, 0))
+        elif self.menu_state == QUIT:
+            self.win.blit(self.main_menu_quit_selected, (0, 0))
+
         pygame.display.update()
         self.menu_background_offset -= 1
+        if self.menu_background_offset < -self.screen_width:
+            self.menu_background_offset = 0
 
     def draw_play(self: object) -> None:
         self.win.blit(self.background_image, (0, 0))
