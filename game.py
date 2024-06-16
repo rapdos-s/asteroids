@@ -26,8 +26,9 @@ MAIN_MENU: int = 1
 PLAY: int = 2
 HIGHSCORES: int = 3
 PROFILE: int = 4
-QUIT: int = 5
-GAME_OVER: int = 6
+LOGOUT: int = 5
+QUIT: int = 6
+GAME_OVER: int = 7
 
 ANTIALIAS: bool = True
 
@@ -35,6 +36,7 @@ SCORE_X: int = 100
 SCORE_Y: int = 50
 
 MAIN_FONT_SIZE: int = 25
+
 
 class Game:
     def __init__(self: object) -> None:
@@ -45,38 +47,43 @@ class Game:
         project_dir: str = os.path.dirname(os.path.abspath(__file__))
         self.assets_dir: str = f"{project_dir}/assets"
 
-        self.background_image: pygame.Surface = pygame.image.load(f"{self.assets_dir}/background.png")
-        self.player_rocket: pygame.Surface = pygame.image.load(f"{self.assets_dir}/player_rocket.png")
-        self.game_over_image: pygame.Surface = pygame.image.load(f"{self.assets_dir}/game_over.png")
+        self.background_image: pygame.Surface = pygame.image.load(
+            f"{self.assets_dir}/background.png"
+        )
+        self.player_rocket: pygame.Surface = pygame.image.load(
+            f"{self.assets_dir}/player_rocket.png"
+        )
+        self.game_over_image: pygame.Surface = pygame.image.load(
+            f"{self.assets_dir}/game_over.png"
+        )
 
         self.menu_background: pygame.Surface = pygame.image.load(
-        f"{self.assets_dir}/full_background.png"
-    )
+            f"{self.assets_dir}/full_background.png"
+        )
         self.main_menu_border: pygame.Surface = pygame.image.load(
-        f"{self.assets_dir}/main_menu_border.png"
-    )
+            f"{self.assets_dir}/main_menu_border.png"
+        )
         self.main_menu_none_selected: pygame.Surface = pygame.image.load(
-        f"{self.assets_dir}/main_menu_none_selected.png"
-    )
+            f"{self.assets_dir}/main_menu_none_selected.png"
+        )
         self.main_menu_play_selected: pygame.Surface = pygame.image.load(
-        f"{self.assets_dir}/main_menu_play_selected.png"
-    )
+            f"{self.assets_dir}/main_menu_play_selected.png"
+        )
         self.main_menu_highscore_selected: pygame.Surface = pygame.image.load(
-        f"{self.assets_dir}/main_menu_highscore_selected.png"
-    )
+            f"{self.assets_dir}/main_menu_highscore_selected.png"
+        )
         self.main_menu_profile_selected: pygame.Surface = pygame.image.load(
-        f"{self.assets_dir}/main_menu_profile_selected.png"
-    )
+            f"{self.assets_dir}/main_menu_profile_selected.png"
+        )
         self.main_menu_quit_selected: pygame.Surface = pygame.image.load(
-        f"{self.assets_dir}/main_menu_quit_selected.png"
-    )
+            f"{self.assets_dir}/main_menu_quit_selected.png"
+        )
 
         self.main_font: pygame.font.Font = pygame.font.Font(
-        f"{self.assets_dir}/Adventure_ReQuest.ttf", MAIN_FONT_SIZE
-    )
+            f"{self.assets_dir}/Adventure_ReQuest.ttf", MAIN_FONT_SIZE
+        )
 
         self.menu_background_offset: int = 0
-
 
         self.screen_width: int = DISPLAY_WIDTH
         self.screen_height: int = DISPLAY_HEIGHT
@@ -107,7 +114,7 @@ class Game:
 
     def run(self: object) -> None:
         print("🚀 Running Asteroids' game!")
-        menu: Menu = Menu(self.win, self.screen_width, self.assets_dir)
+        menu: Menu = Menu(self.win, self.screen_width, self.assets_dir, self.framerate)
 
         clock: pygame.time.Clock = pygame.time.Clock()
         while self.keep_running:
@@ -129,11 +136,18 @@ class Game:
             if self.state == PLAY:
                 play: Play = Play(self.win, self.screen_width, self.screen_height)
             if self.state == HIGHSCORES:
-                highscore: HighScore = HighScore(self.win, self.screen_width, self.screen_height)
+                highscore: HighScore = HighScore(
+                    self.win, self.screen_width, self.screen_height
+                )
             if self.state == PROFILE:
-                profile: Profile = Profile(self.win, self.screen_width, self.screen_height)
+                profile: Profile = Profile(
+                    self.win, self.screen_width, self.screen_height
+                )
             if self.state == MAIN_MENU:
-                menu.run()
+                self.state = menu.run()
+                self.keep_running = False
+            if self.state == QUIT:
+                self.keep_running = False
                 # if event.type == pygame.KEYDOWN:
                 #     if event.key == pygame.K_UP or event.key == pygame.K_w:
                 #         self.menu_state -= 1

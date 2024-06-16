@@ -1,8 +1,11 @@
 import os
 import pygame
 
+
 class Login:
-    def __init__(self: object, win: pygame.Surface, screen_width: int, screen_height: int) -> None:
+    def __init__(
+        self: object, win: pygame.Surface, screen_width: int, screen_height: int
+    ) -> None:
         self.win: pygame.Surface = win
         self.screen_width: int = screen_width
         self.screen_height: int = screen_height
