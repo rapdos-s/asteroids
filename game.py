@@ -140,11 +140,11 @@ class Game:
 
     def draw_main_menu(self: object) -> None:
         resized_image = pygame.transform.scale(
-            self.menu_background, (self.screen_width, self.screen_height)
+            self.menu_background, (self.screen_width, self.screen_width)
         )
-        self.win.blit(resized_image, (0, self.menu_background_offset))
+        self.win.blit(resized_image, (self.menu_background_offset, 0))
         self.win.blit(
-            resized_image, (0, self.menu_background_offset - self.screen_height)
+            resized_image, (self.menu_background_offset + self.screen_width, 0)
         )
         self.win.blit(self.main_menu_border, (0, 0))
         if self.menu_state == PLAY:
@@ -157,8 +157,8 @@ class Game:
             self.win.blit(self.main_menu_quit_selected, (0, 0))
 
         pygame.display.update()
-        self.menu_background_offset += 1
-        if self.menu_background_offset > self.screen_height:
+        self.menu_background_offset -= 1
+        if self.menu_background_offset < 0 - self.screen_width:
             self.menu_background_offset = 0
 
     def draw_play(self: object) -> None:

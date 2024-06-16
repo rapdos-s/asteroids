@@ -65,12 +65,27 @@ class Player:
     def update_player(self: object) -> None:
         self.rotated_surface = pygame.transform.rotate(self.image, self.angle)
         self.rotated_rect = self.rotated_surface.get_rect()
-        self.rotated_rect.center = (self.x, self.y)
 
         self.cosine = math.cos(math.radians(self.angle + 90))
         self.sine = math.sin(math.radians(self.angle + 90))
 
     def draw(self: object, win: pygame.Surface) -> None:
+        self.rotated_rect.center = (self.x, self.y)
+        win.blit(self.rotated_surface, self.rotated_rect)
+
+        self.rotated_rect.center = (
+            self.x + self.display_width,
+            self.y + self.display_height,
+        )
+        win.blit(self.rotated_surface, self.rotated_rect)
+
+        self.rotated_rect.center = (self.x, self.y + self.display_height)
+        win.blit(self.rotated_surface, self.rotated_rect)
+
+        self.rotated_rect.center = (
+            self.x + self.display_width,
+            self.y + self.display_height,
+        )
         win.blit(self.rotated_surface, self.rotated_rect)
 
     def alive(self: object) -> bool:
