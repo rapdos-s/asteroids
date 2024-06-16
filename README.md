@@ -88,4 +88,4 @@ rm -fr venv
 
 Ideias para versão 2.0
 Pausa
-Nave aparece do outro lado de forma mais orgânica
+A velocidade dos asteroids aumenta conforme o tempo de jogo decorrido
