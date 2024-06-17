@@ -2,7 +2,7 @@ import os
 import pygame
 
 
-class HighScore:
+class Leaderboard:
     def __init__(
         self: object, win: pygame.Surface, screen_width: int, screen_height: int
     ) -> None:
@@ -11,7 +11,7 @@ class HighScore:
         self.screen_height: int = screen_height
 
         font: pygame.font.Font = pygame.font.Font(None, 32)
-        screen_text: str = f"HIGHSCORE SCREEN"
+        screen_text: str = f"LEADERBOARD SCREEN"
         text: pygame.Surface = font.render(screen_text, True, (255, 255, 255))
         text_rect: pygame.Rect = text.get_rect()
         text_rect.center = (142, 142)

@@ -1,25 +1,25 @@
 import pygame
 
+from screens.screen import Screen
+
 LOGIN: int = 0
 MAIN_MENU: int = 1
 PLAY: int = 2
-HIGHSCORES: int = 3
+LEADERBOARD: int = 3
 PROFILE: int = 4
 LOGOUT: int = 5
 QUIT: int = 6
 GAME_OVER: int = 7
 
 
-class Menu:
+class Menu(Screen):
     def __init__(
         self: object,
         win: pygame.Surface,
-        screen_width: int,
         assets_dir: str,
         framerate: int,
     ) -> None:
         self.win: pygame.Surface = win
-        self.screen_width: int = screen_width
         self.assets_dir: str = assets_dir
         self.framerate = framerate
 
@@ -32,8 +32,8 @@ class Menu:
         self.main_menu_play_selected: pygame.Surface = pygame.image.load(
             f"{self.assets_dir}/main_menu_play_selected.png"
         )
-        self.main_menu_highscore_selected: pygame.Surface = pygame.image.load(
-            f"{self.assets_dir}/main_menu_highscore_selected.png"
+        self.main_menu_leaderboard_selected: pygame.Surface = pygame.image.load(
+            f"{self.assets_dir}/main_menu_leaderboard_selected.png"
         )
         self.main_menu_profile_selected: pygame.Surface = pygame.image.load(
             f"{self.assets_dir}/main_menu_profile_selected.png"
@@ -60,7 +60,8 @@ class Menu:
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    self.keep_running = False
+                    self.selected = True
+                    self.menu_state = QUIT
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_UP or event.key == pygame.K_w:
                         self.menu_state -= 1
@@ -77,7 +78,8 @@ class Menu:
             elif self.menu_state > QUIT:
                 self.menu_state = PLAY
 
-            self.draw()
+            if selected is False:
+                self.draw()
 
         return self.menu_state
 
@@ -88,10 +90,29 @@ class Menu:
             (self.menu_background_offset + self.background_image_width, 0),
         )
 
+        rect_width: int = 300
+        rect_height: int = 255
+        rect_radius: int = 20
+        rect_x: int = self.win.get_width() // 2 - rect_width // 2
+        rect_y: int = 340
+        rect_color: tuple = (0, 0, 0)
+        rect_alpha: int = 128
+
+        self.draw_rounded_rect(
+            self.win,
+            rect_x,
+            rect_y,
+            rect_width,
+            rect_height,
+            rect_radius,
+            rect_color,
+            rect_alpha,
+        )
+
         if self.menu_state == PLAY:
             self.win.blit(self.main_menu_play_selected, (0, 0))
-        elif self.menu_state == HIGHSCORES:
-            self.win.blit(self.main_menu_highscore_selected, (0, 0))
+        elif self.menu_state == LEADERBOARD:
+            self.win.blit(self.main_menu_leaderboard_selected, (0, 0))
         elif self.menu_state == PROFILE:
             self.win.blit(self.main_menu_profile_selected, (0, 0))
         elif self.menu_state == LOGOUT:

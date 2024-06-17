@@ -9,13 +9,16 @@ MOVE_SPEED: int = 10
 class Player:
     def __init__(
         self: object,
-        player_rocket: pygame.Surface,
         x: int,
         y: int,
         display_width: int,
         display_height: int,
+        assets_dir: str,
     ) -> None:
-        self.image: pygame.Surface = player_rocket
+        self.assets_dir: str = assets_dir
+        self.image: pygame.Surface = pygame.image.load(
+            f"{self.assets_dir}/player_rocket.png"
+        )
 
         self.is_alive: bool = True
 

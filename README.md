@@ -19,8 +19,9 @@
 - [X] Loop
   - [ ] Sistema de menu
     - [ ] Play
-    - [ ] Highscore
+    - [ ] Leaderboard
     - [ ] Profile
+    - [ ] Logout
     - [ ] Quit
   - [X] Especific fps
   - [X] Controls
@@ -39,7 +40,7 @@
   - [ ] players
     - [ ] id
     - [ ] player_name
-  - [ ] high_scores
+  - [ ] leaderboard
     - [ ] id
     - [ ] player_id
     - [ ] score
@@ -57,6 +58,8 @@
     - [ ] player_id
     - [ ] achievement_id
     - [ ] date_earned (timestamp)
+
+- [ ] Documentar
 
 
 ## Running
@@ -89,3 +92,4 @@ rm -fr venv
 Ideias para versão 2.0
 Pausa
 A velocidade dos asteroids aumenta conforme o tempo de jogo decorrido
+Trocar macros de estados por enum
