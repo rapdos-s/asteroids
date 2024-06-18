@@ -1,9 +1,11 @@
 import math
 import pygame
 
-TURN_SPEED: int = 3
+from screens.resources.bullet import Bullet
+
+TURN_SPEED: int = 2
 START_ANGLE: int = 0
-MOVE_SPEED: int = 10
+MOVE_SPEED: int = 4
 
 
 class Player:
@@ -36,7 +38,23 @@ class Player:
         self.cosine: float = None
         self.sine: float = None
 
+        self.player_cannon_x: int = 0
+        self.player_cannon_y: int = 0
+        self.bullets: list[Bullet] = []
+
         self.update_player()
+
+    def check_movement(self: object):
+        keys = pygame.key.get_pressed()
+
+        if keys[pygame.K_UP] or keys[pygame.K_w]:
+            self.move_forward()
+
+        if keys[pygame.K_LEFT] or keys[pygame.K_a]:
+            self.turn_left()
+
+        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+            self.turn_right()
 
     def move_forward(self: object):
         self.x += self.cosine * MOVE_SPEED
@@ -96,3 +114,10 @@ class Player:
 
     def kill(self: object) -> None:
         self.is_alive = False
+
+    def shoot(self: object):
+        self.player_cannon_x = self.x + (self.cosine / 2) * self.width / 2
+        self.player_cannon_y = self.y - (self.sine / 2) * self.height / 2
+        self.bullets.append(
+            Bullet(self.player_cannon_x, self.player_cannon_y, self.angle)
+        )

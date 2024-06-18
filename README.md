@@ -89,6 +89,52 @@ Remove venv
 rm -fr venv
 ```
 
+Install database
+```sh
+sudo apt-get update
+sudo apt-get install postgresql postgresql-contrib -y
+```
+
+Enable and init Database
+```sh
+sudo systemctl start postgresql
+sudo systemctl enable postgresql
+```
+
+Check database service status
+```sh
+sudo systemctl status postgresql
+```
+
+Entering database
+```sh
+sudo -i -u postgres
+```
+
+Exiting Database
+```sh
+exit
+```
+
+CLosing database service
+```sh
+sudo systemctl stop postgresql
+```
+
+Criando novo banco de dados
+# Acessar o PostgreSQL como superusuário
+sudo -u postgres psql
+
+# Criar um novo banco de dados
+CREATE DATABASE db_asteroids;
+
+# Criar um novo usuário com senha
+CREATE USER marvin WITH ENCRYPTED PASSWORD 'F0rty_Tw0';
+
+# Dar ao novo usuário permissões para o novo banco de dados
+GRANT ALL PRIVILEGES ON DATABASE db_asteroids TO marvin;
+
+
 Ideias para versão 2.0
 Pausa
 A velocidade dos asteroids aumenta conforme o tempo de jogo decorrido

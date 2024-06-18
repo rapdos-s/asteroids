@@ -52,15 +52,15 @@ class Menu(Screen):
         self.menu_state: int = PLAY
 
     def run(self: object) -> int:
+        clock: pygame.time.Clock = pygame.time.Clock()
         selected: bool = False
 
-        clock: pygame.time.Clock = pygame.time.Clock()
         while not selected:
             clock.tick(self.framerate)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    self.selected = True
+                    selected = True
                     self.menu_state = QUIT
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_UP or event.key == pygame.K_w:
