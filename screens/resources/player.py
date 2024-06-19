@@ -2,10 +2,7 @@ import math
 import pygame
 
 from screens.resources.bullet import Bullet
-
-TURN_SPEED: int = 2
-START_ANGLE: int = 0
-MOVE_SPEED: int = 4
+from constants import *
 
 
 class Player:
@@ -31,7 +28,7 @@ class Player:
 
         self.x: int = x
         self.y: int = y
-        self.angle: int = START_ANGLE
+        self.angle: int = PLAYER_START_ANGLE
 
         self.rotated_surface: pygame.Surface = None
         self.rotated_rect: pygame.Rect = None
@@ -57,8 +54,8 @@ class Player:
             self.turn_right()
 
     def move_forward(self: object):
-        self.x += self.cosine * MOVE_SPEED
-        self.y -= self.sine * MOVE_SPEED
+        self.x += self.cosine * PLAYER_MOVE_SPEED
+        self.y -= self.sine * PLAYER_MOVE_SPEED
         self.check_location()
         self.update_player()
 
@@ -76,11 +73,11 @@ class Player:
             self.y = 0 - self.height
 
     def turn_left(self: object):
-        self.angle += TURN_SPEED
+        self.angle += PLAYER_TURN_SPEED
         self.update_player()
 
     def turn_right(self: object):
-        self.angle -= TURN_SPEED
+        self.angle -= PLAYER_TURN_SPEED
         self.update_player()
 
     def update_player(self: object) -> None:
@@ -109,6 +106,10 @@ class Player:
         )
         win.blit(self.rotated_surface, self.rotated_rect)
 
+    def draw_collision(self: object, win: pygame.Surface) -> None:
+        collision: pygame.Rect = self.get_collision()
+        pygame.draw.rect(win, (255, 0, 0), collision, 2)
+
     def alive(self: object) -> bool:
         return self.is_alive
 
@@ -121,3 +122,22 @@ class Player:
         self.bullets.append(
             Bullet(self.player_cannon_x, self.player_cannon_y, self.angle)
         )
+
+    def get_x(self: object) -> int:
+        return self.x
+
+    def get_y(self: object) -> int:
+        return self.y
+
+    def get_angle(self: object) -> int:
+        return self.angle
+
+    def get_collision(self: object) -> pygame.Rect:
+        collision: pygame.Rect = pygame.Rect(
+            self.x,
+            self.y,
+            self.width * PLAYER_COLLISION_REDUCER,
+            self.height * PLAYER_COLLISION_REDUCER,
+        )
+        collision.center = (self.x, self.y)
+        return collision

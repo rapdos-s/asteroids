@@ -10,32 +10,36 @@ class Asteroid:
         self: object,
         win: pygame.Surface,
         assets_dir: str,
+        size: int,
+        x: int = 0,
+        y: int = 0,
     ):
         self.win: pygame.Surface = win
         self.assets_dir: str = assets_dir
 
-        self.size: int = random.choice([1, 2, 4])
+        self.size: int = size
         self.image: pygame.Surface = None
         self.points: int = 0
-        self.rect: pygame.Rect = None
         self.destroyed: bool = False
 
-        if self.size == ASTEROID_SMALL:
+        if self.size == ASTEROID_SMALL_SIZE:
             self.image = pygame.image.load(f"{self.assets_dir}/asteroid_x1.png")
-            self.points = 100
-        elif self.size == ASTEROID_MEDIUM:
+            self.points = ASTEROID_SMALL_POINTS
+        elif self.size == ASTEROID_MEDIUM_SIZE:
             self.image = pygame.image.load(f"{self.assets_dir}/asteroid_x2.png")
-            self.points = 50
+            self.points = ASTEROID_MEDIUM_POINTS
         else:
             self.image = pygame.image.load(f"{self.assets_dir}/asteroid_x4.png")
-            self.points = 20
+            self.points = ASTEROID_BIG_POINTS
 
+        self.rect = self.image.get_rect()
         self.width: int = self.image.get_width()
         self.height: int = self.image.get_height()
 
-        self.x: int = 0
-        self.y: int = 0
-        self.set_initial_position()
+        self.x: int = x
+        self.y: int = y
+        if self.x == 0 and self.y == 0:
+            self.set_initial_position()
 
         self.direction: int = 0
         self.set_direction()
@@ -80,17 +84,39 @@ class Asteroid:
             self.direction_y = random.choice([-3, -2, 2, 3])
 
     def update_asteroid(self: object) -> None:
-        self.rect = self.image.get_rect()
         self.rect.center = (self.x, self.y)
 
     def draw(self: object, win: pygame.Surface) -> None:
         win.blit(self.image, self.rect)
 
+    def draw_collision(self: object, win: pygame.Surface) -> None:
+        collision: pygame.Rect = self.get_collision()
+        pygame.draw.rect(win, (0, 255, 0), collision, 2)
+
     def is_destroyed(self: object) -> bool:
         return self.destroyed
-    
-    def get_size() -> int:
+
+    def get_size(self: object) -> int:
         return self.size
+
+    def get_collision(self: object) -> pygame.Rect:
+        collision: pygame.Rect = pygame.Rect(
+            self.x,
+            self.y,
+            self.width * ASTEROID_COLLISION_REDUCER,
+            self.height * ASTEROID_COLLISION_REDUCER,
+        )
+        collision.center = (self.x, self.y)
+        return collision
+
+    def get_points(self: object) -> int:
+        return self.points
+
+    def get_x(self: object) -> int:
+        return self.x
+
+    def get_y(self: object) -> int:
+        return self.y
 
     def move(self: object) -> None:
         self.step += 1

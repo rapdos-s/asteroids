@@ -23,7 +23,7 @@
 - [X] Movimentação do jogador
 - [X] Balas / Tiros
 - [X] Fazer os asteroids
-- [ ] Colisão
+- [X] Colisão
 - [ ] Score
 - [ ] Criar arquivo config.py
 - [X] Criar tabelas
@@ -57,14 +57,6 @@ SAVE 11: DMOREIRA
 SAVE 12: LUMEDEIR
 SAVE 13: LUIZEDUA
 SAVE 14: RAPDOS-S
-
-
-
-Asteroids
-GRANDE: 20 points
-MÉDIO: 50 points
-PEQUENO: 100 points
-
 
 Conquistas:
 ???: Jogar 1 vez

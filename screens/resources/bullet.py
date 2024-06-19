@@ -20,6 +20,8 @@ class Bullet:
         self.dx: float = self.cosine * BULLET_SPEED
         self.dy: float = self.sine * BULLET_SPEED
 
+        self.rect: pygame.Rect = pygame.Rect(self.x, self.y, BULLET_SIZE, BULLET_SIZE)
+
     def move(self: object) -> None:
         self.x += self.dx
         self.y -= self.dy
@@ -35,3 +37,10 @@ class Bullet:
             return True
 
         return False
+
+    def update_bullet(self: object) -> None:
+        self.rect = pygame.Rect(self.x, self.y, BULLET_SIZE, BULLET_SIZE)
+
+    def get_collision(self: object) -> pygame.Rect:
+        self.update_bullet()
+        return self.rect

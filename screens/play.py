@@ -1,4 +1,5 @@
 import pygame
+import random
 
 from constants import *
 
@@ -37,6 +38,9 @@ class Play(Screen):
         self.press_font: pygame.font.Font = pygame.font.Font(
             f"{self.assets_dir}/04B_03__.ttf", 25
         )
+        self.debug_font: pygame.font.Font = pygame.font.Font(
+            f"{self.assets_dir}/04B_03__.ttf", 20
+        )
 
         self.player: Player = Player(
             x=self.win.get_width() // 2,
@@ -52,14 +56,15 @@ class Play(Screen):
         self.limit_score: int = 0
         self.game_over: bool = False
         self.asteroid_timer: int = 0
+        self.debug: bool = False
 
     def run(self: object) -> int:
         self.score = 0
+        self.game_over = False
 
-        clock: pygame.time.Clock = pygame.time.Clock()
         keep_running: bool = True
         return_state: int = MAIN_MENU
-        self.game_over = False
+        clock: pygame.time.Clock = pygame.time.Clock()
 
         while keep_running:
             delta_time: float = clock.tick(self.framerate)
@@ -83,6 +88,8 @@ class Play(Screen):
                         if self.game_over == True:
                             keep_running = False
                             return_state = MAIN_MENU
+                    if event.key == pygame.K_1:
+                        self.debug = not self.debug
 
             for bullet in self.player.bullets:
                 if bullet.off_screen(self.win):
@@ -90,18 +97,61 @@ class Play(Screen):
                 elif self.game_over == False:
                     bullet.move()
 
+                for asteroid in self.asteroids:
+                    if bullet.get_collision().colliderect(asteroid.get_collision()):
+                        try:
+                            self.player.bullets.pop(self.player.bullets.index(bullet))
+                            self.score += asteroid.get_points()
+                            if asteroid.get_size() != ASTEROID_SMALL_SIZE:
+                                self.asteroids.append(
+                                    Asteroid(
+                                        self.win,
+                                        self.assets_dir,
+                                        size=asteroid.get_size() // 2,
+                                        x=asteroid.get_x(),
+                                        y=asteroid.get_y(),
+                                    )
+                                )
+                                self.asteroids.append(
+                                    Asteroid(
+                                        self.win,
+                                        self.assets_dir,
+                                        size=asteroid.get_size() // 2,
+                                        x=asteroid.get_x(),
+                                        y=asteroid.get_y(),
+                                    )
+                                )
+                            self.asteroids.pop(self.asteroids.index(asteroid))
+                        except:
+                            pass
+
             for asteroid in self.asteroids:
                 if asteroid.off_screen(self.win) or asteroid.is_destroyed():
                     self.asteroids.pop(self.asteroids.index(asteroid))
                 elif self.game_over == False:
                     asteroid.move()
 
+                if asteroid.get_collision().colliderect(self.player.get_collision()):
+                    self.game_over = True
+
             self.asteroid_timer += delta_time
             if (
                 self.asteroid_timer > ASTEROID_TIME_SPAWN
                 and len(self.asteroids) < ASTEROID_LIMIT
             ):
-                self.asteroids.append(Asteroid(self.win, self.assets_dir))
+                self.asteroids.append(
+                    Asteroid(
+                        self.win,
+                        self.assets_dir,
+                        size=random.choice(
+                            [
+                                ASTEROID_SMALL_SIZE,
+                                ASTEROID_MEDIUM_SIZE,
+                                ASTEROID_BIG_SIZE,
+                            ]
+                        ),
+                    )
+                )
                 self.asteroid_timer = 0
 
             if keep_running == True:
@@ -119,6 +169,9 @@ class Play(Screen):
         self.draw_asteroid()
         self.draw_score()
         self.draw_game_over()
+
+        if self.debug == True:
+            self.draw_debug()
 
         pygame.display.update()
 
@@ -175,3 +228,32 @@ class Play(Screen):
                 self.press_font.render("Press space to menu... ", True, WHITE),
                 (170, 350),
             )
+
+    def draw_debug(self: object) -> None:
+        self.player.draw_collision(self.win)
+
+        for asteroid in self.asteroids:
+            asteroid.draw_collision(self.win)
+
+        text_y: int = 10
+        text_y_line: int = 20
+        text_x: int = 10
+
+        texts: list[str] = [
+            f"DEBUG MODE: Activated",
+            f"",
+            f"Asteroids: {len(self.asteroids)}",
+            f"Bullets: {len(self.player.bullets)}",
+            f"",
+            f"Player position: {self.player.get_x():.2f}, {self.player.get_y():.2f}",
+            f"Player angle: {self.player.get_angle()}",
+        ]
+
+        for text in texts:
+            text_surface: pygame.Surface = self.debug_font.render(
+                text, ANTIALIAS, YELLOW
+            )
+            text_width: int = text_surface.get_width()
+            right_align_x: int = DISPLAY_WIDTH - text_width - text_x
+            self.win.blit(text_surface, (right_align_x, text_y))
+            text_y += text_y_line
