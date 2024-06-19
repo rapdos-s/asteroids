@@ -1,6 +1,6 @@
 import psycopg2
 
-# from game import Game
+from game import Game
 
 
 def database_shenanigans() -> None:
@@ -95,9 +95,9 @@ if __name__ == "__main__":
 
     database_shenanigans()
 
-    # game: Game = Game()
+    game: Game = Game()
 
-    # print("🎮 Asteroids' game is ready!")
-    # game.run()
+    print("🎮 Asteroids' game is ready!")
+    game.run()
 
     print("🌌 Everything is done, Bye!")

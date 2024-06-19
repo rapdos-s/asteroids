@@ -1,30 +1,10 @@
 import pygame
 
+from constants import *
+
 from screens.resources.player import Player
 from screens.screen import Screen
-
-LOGIN: int = 0
-MAIN_MENU: int = 1
-PLAY: int = 2
-LEADERBOARD: int = 3
-PROFILE: int = 4
-LOGOUT: int = 5
-QUIT: int = 6
-GAME_OVER: int = 7
-
-ANTIALIAS: bool = True
-WHITE_COLOR: tuple = (255, 255, 255)
-BLACK_COLOR: tuple = (0, 0, 0)
-
-SCORE_TEXT: str = "Score: "
-SCORE_FONT_SIZE: int = 25
-SCORE_X: int = 42
-SCORE_Y: int = 24
-SCORE_COLOR: tuple = (242, 242, 142)
-
-GAME_OVER_MESSAGE_TEXT: str = "Press space to continue..."
-GAME_OVER_MESSAGE_FONT_SIZE: int = 25
-GAME_OVER_MESSAGE_COLOR: tuple = (242, 242, 142)
+from screens.resources.asteroid import Asteroid
 
 
 class Play(Screen):
@@ -51,6 +31,12 @@ class Play(Screen):
         self.game_over_message_font: pygame.font.Font = pygame.font.Font(
             f"{self.assets_dir}/Adventure_ReQuest.ttf", SCORE_FONT_SIZE
         )
+        self.game_over_font: pygame.font.Font = pygame.font.Font(
+            f"{self.assets_dir}/04B_03__.ttf", 65
+        )
+        self.press_font: pygame.font.Font = pygame.font.Font(
+            f"{self.assets_dir}/04B_03__.ttf", 25
+        )
 
         self.player: Player = Player(
             x=self.win.get_width() // 2,
@@ -60,8 +46,12 @@ class Play(Screen):
             assets_dir=self.assets_dir,
         )
 
+        self.asteroids: list[Asteroid] = []
+
         self.score: int = 0
+        self.limit_score: int = 0
         self.game_over: bool = False
+        self.asteroid_timer: int = 0
 
     def run(self: object) -> int:
         self.score = 0
@@ -69,9 +59,10 @@ class Play(Screen):
         clock: pygame.time.Clock = pygame.time.Clock()
         keep_running: bool = True
         return_state: int = MAIN_MENU
+        self.game_over = False
 
         while keep_running:
-            clock.tick(self.framerate)
+            delta_time: float = clock.tick(self.framerate)
 
             if self.game_over == False:
                 self.player.check_movement()
@@ -84,18 +75,40 @@ class Play(Screen):
                     if event.key == pygame.K_ESCAPE:
                         keep_running = False
                         return_state = MAIN_MENU
+                    if event.key == pygame.K_k:
+                        self.game_over = True
                     if event.key == pygame.K_SPACE:
                         if self.game_over == False:
                             self.player.shoot()
+                        if self.game_over == True:
+                            keep_running = False
+                            return_state = MAIN_MENU
 
             for bullet in self.player.bullets:
                 if bullet.off_screen(self.win):
                     self.player.bullets.pop(self.player.bullets.index(bullet))
-                else:
+                elif self.game_over == False:
                     bullet.move()
+
+            for asteroid in self.asteroids:
+                if asteroid.off_screen(self.win) or asteroid.is_destroyed():
+                    self.asteroids.pop(self.asteroids.index(asteroid))
+                elif self.game_over == False:
+                    asteroid.move()
+
+            self.asteroid_timer += delta_time
+            if (
+                self.asteroid_timer > ASTEROID_TIME_SPAWN
+                and len(self.asteroids) < ASTEROID_LIMIT
+            ):
+                self.asteroids.append(Asteroid(self.win, self.assets_dir))
+                self.asteroid_timer = 0
 
             if keep_running == True:
                 self.draw()
+
+        for asteroid in self.asteroids:
+            self.asteroids.pop(self.asteroids.index(asteroid))
 
         return return_state
 
@@ -103,6 +116,7 @@ class Play(Screen):
         self.draw_background()
         self.draw_bullets()
         self.draw_player()
+        self.draw_asteroid()
         self.draw_score()
         self.draw_game_over()
 
@@ -114,6 +128,10 @@ class Play(Screen):
     def draw_player(self: object) -> None:
         self.player.draw(self.win)
 
+    def draw_asteroid(self: object) -> None:
+        for asteroid in self.asteroids:
+            asteroid.draw(self.win)
+
     def draw_bullets(self: object) -> None:
         for bullet in self.player.bullets:
             bullet.draw(self.win)
@@ -121,21 +139,21 @@ class Play(Screen):
     def draw_score(self: object) -> None:
         score_text: str = f"{SCORE_TEXT}{self.score}"
 
-        text: pygame.Surface = self.score_font.render(
-            score_text, ANTIALIAS, WHITE_COLOR
-        )
+        text: pygame.Surface = self.score_font.render(score_text, ANTIALIAS, WHITE)
 
         self.win.blit(text, (SCORE_X, SCORE_Y))
-        self.score += 1
+        if self.limit_score % 10 == 0:
+            self.score += 1
+        self.limit_score += 1
 
     def draw_game_over(self: object) -> None:
-        if self.score > 1000:
+        if self.game_over:
             self.game_over = True
-            rect_width: int = 450
-            rect_height: int = 230
-            rect_radius: int = 20
-            rect_x: int = self.win.get_width() // 2 - rect_width // 2
-            rect_y: int = 250
+            rect_width: int = 640
+            rect_height: int = 640
+            rect_radius: int = 0
+            rect_x: int = 0
+            rect_y: int = 0
             rect_color: tuple = (0, 0, 0)
             rect_alpha: int = 128
 
@@ -150,12 +168,10 @@ class Play(Screen):
                 rect_alpha,
             )
 
-            self.win.blit(self.game_over_image, (0, 0))
-
-            message_text: str = GAME_OVER_MESSAGE_TEXT
-            text: pygame.Surface = self.game_over_message_font.render(
-                message_text, ANTIALIAS, GAME_OVER_MESSAGE_COLOR
+            self.win.blit(
+                self.game_over_font.render("GAME OVER", True, YELLOW), (147, 267)
             )
-            message_x: int = self.win.get_width() // 2 - text.get_width() // 2
-            message_y: int = 400
-            self.win.blit(text, (message_x, message_y))
+            self.win.blit(
+                self.press_font.render("Press space to menu... ", True, WHITE),
+                (170, 350),
+            )

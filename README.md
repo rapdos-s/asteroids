@@ -111,6 +111,9 @@ Entering database
 sudo -i -u postgres
 ```
 
+# Acessar o PostgreSQL como superusuário
+sudo -u postgres psql
+
 Exiting Database
 ```sh
 exit
@@ -122,8 +125,7 @@ sudo systemctl stop postgresql
 ```
 
 Criando novo banco de dados
-# Acessar o PostgreSQL como superusuário
-sudo -u postgres psql
+
 
 # Criar um novo banco de dados
 CREATE DATABASE db_asteroids;

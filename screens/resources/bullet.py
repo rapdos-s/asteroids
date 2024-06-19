@@ -1,11 +1,7 @@
 import math
 import pygame
 
-from typing import Tuple
-
-BULLET_SIZE: int = 5
-BULLET_SPEED: int = 15
-BULLET_COLOR: Tuple[int, int, int] = (242, 242, 142)
+from constants import *
 
 
 class Bullet:

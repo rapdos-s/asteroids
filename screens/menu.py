@@ -1,15 +1,8 @@
 import pygame
 
-from screens.screen import Screen
+from constants import *
 
-LOGIN: int = 0
-MAIN_MENU: int = 1
-PLAY: int = 2
-LEADERBOARD: int = 3
-PROFILE: int = 4
-LOGOUT: int = 5
-QUIT: int = 6
-GAME_OVER: int = 7
+from screens.screen import Screen
 
 
 class Menu(Screen):
@@ -54,6 +47,7 @@ class Menu(Screen):
     def run(self: object) -> int:
         clock: pygame.time.Clock = pygame.time.Clock()
         selected: bool = False
+        self.menu_state = PLAY
 
         while not selected:
             clock.tick(self.framerate)
@@ -71,7 +65,7 @@ class Menu(Screen):
                         selected = True
                     elif event.key == pygame.K_ESCAPE:
                         selected = True
-                        self.menu_state = QUIT
+                        self.menu_state = LOGOUT
 
             if self.menu_state < PLAY:
                 self.menu_state = QUIT

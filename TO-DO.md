@@ -1,8 +1,9 @@
-- [ ] Verificar horário da reunião de quarta
-- [ ] Sudo (Luiza)
+- [X] Título do jogo, colocar 1.0
+- [X] Verificar horário da reunião de quarta
+- [X] Sudo (Luiza)
 - [X] Organizar a main
 
-- [ ] screen/
+- [X] screen/
   - [X] Separar tela de menu em uma class
   - [X] Separar tela de login em uma class
   - [X] Separar tela de play em uma class
@@ -10,10 +11,10 @@
   - [X] Separar tela de perfil em uma class
   - [X] Trocar as imagens do menu (QUIT por LOGOUT)
   - [X] Desenhar tela de Menu
-  - [ ] Desenhar tela de Login
-  - [ ] Desenhar tela de Play
-  - [ ] Desenhar tela de Leaderboard
-  - [ ] Desenhar tela de Perfil
+  - [X] Desenhar tela de Login
+  - [X] Desenhar tela de Play
+  - [X] Desenhar tela de Leaderboard
+  - [X] Desenhar tela de Perfil
 
 - [X] Concertar botão X para fechar
 - [X] Consertar "QUIT" sendo selecionado quando ESC é pressionado
@@ -21,22 +22,23 @@
 - [X] Função para desenhar retângulos com cantos arredondados
 - [X] Movimentação do jogador
 - [X] Balas / Tiros
-- [ ] Fazer os asteroids
+- [X] Fazer os asteroids
 - [ ] Colisão
 - [ ] Score
 - [ ] Criar arquivo config.py
-- [ ] Criar tabelas
+- [X] Criar tabelas
 - [ ] Guardar id de jogador
 - [ ] Guardar score de jogador
-- [ ] Concertar bug quando se entra e sai mais de uma vez no jogo
+- [X] Concertar bug quando se entra e sai mais de uma vez no jogo
+- [X] Fazer os menus irem para o lugar certo quando ESC é pressionado
+- [X] Concertar LOGOUT selecionado quando sai do menu e loga novamente
 
-- [ ] Exportar constantes para um arquivo
+- [X] Exportar constantes para um arquivo
 
 - [ ] Documentar
-- [ ] Trocar efetivados por contratados
-- [ ] Fazer a tela de login
-- [ ] Fazer a imagem de game over
-- [ ] Verificar comportamento do X e ESC em todas as telas
+- [X] Trocar efetivados por contratados
+- [X] Fazer a imagem de game over
+- [X] Verificar comportamento do X e ESC em todas as telas
 
 Perfis (Limite de 8 caracteres para o nome)
 SAVE 01: KAREN
