@@ -141,3 +141,18 @@ Ideias para versão 2.0
 Pausa
 A velocidade dos asteroids aumenta conforme o tempo de jogo decorrido
 Trocar macros de estados por enum
+
+
+
+## Jogo
+
+Explicação básica do asteroids
+
+### Controles
+w ou seta apra cima impulsiona a nave
+a ou seta para esquerda, gira em sentido anti-horário
+d ou seta para direita, gira em sentido horário
+Tecla 1 liga o debug
+
+## Banco de dados
+Colocar estrutura das tabelas

@@ -24,8 +24,10 @@
 - [X] Balas / Tiros
 - [X] Fazer os asteroids
 - [X] Colisão
-- [ ] Score
+- [X] Score
+- [ ] Colocar variáveis de ambiente em um arquivo .env
 - [ ] Criar arquivo config.py
+- [ ] Criar get_database_cursor
 - [X] Criar tabelas
 - [ ] Guardar id de jogador
 - [ ] Guardar score de jogador
