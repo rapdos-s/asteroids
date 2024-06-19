@@ -1,10 +1,11 @@
 import psycopg2
 
+from database import Database
 from game import Game
 
 
 def database_shenanigans() -> None:
-    print("💾 Setting up psycopg2 connection")
+    # print("💾 Setting up psycopg2 connection")
 
     # Configuração de acesso ao Banco, deve ser feito depois via .env
     db_name: str = "db_asteroids"
@@ -78,7 +79,7 @@ def database_shenanigans() -> None:
     player_name: str = db_cursor.fetchone()[0]
     player_score: int = db_cursor.fetchone()[1]
     player_score_date: str = db_cursor.fetchone()[2]
-    print(f"Player: {player_name} | Score: {player_score} | Date: {player_score_date}")
+    # print(f"Player: {player_name} | Score: {player_score} | Date: {player_score_date}")
 
     # Commit das alterações
     db_connection.commit()
@@ -87,13 +88,14 @@ def database_shenanigans() -> None:
     db_cursor.close()
     db_connection.close()
 
-    print("💾 Database is ready!")
+    # print("💾 Database is ready!")
 
 
 if __name__ == "__main__":
     print("🚀 ABC | 42 Asteroids 🌑")
 
-    database_shenanigans()
+    database: Database = Database()
+    # database_shenanigans()
 
     game: Game = Game()
 

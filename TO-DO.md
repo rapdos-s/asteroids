@@ -25,9 +25,11 @@
 - [X] Fazer os asteroids
 - [X] Colisão
 - [X] Score
-- [ ] Colocar variáveis de ambiente em um arquivo .env
+- [X] Colocar variáveis de ambiente em um arquivo .env
+- [ ] Resolver bug de saída da tela
+- [ ] Criar modal de conquistas
 - [ ] Criar arquivo config.py
-- [ ] Criar get_database_cursor
+- [X] Criar classe Database com conexão
 - [X] Criar tabelas
 - [ ] Guardar id de jogador
 - [ ] Guardar score de jogador
