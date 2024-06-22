@@ -1,5 +1,5 @@
 ## TO-DO
-- [ ] Limpar e organizar o .gitignore
+- [x] Limpar e organizar o .gitignore
 - [ ] Configurar ambiente de banco de dados e jogo
 - [ ] Resolver bug de saída da tela
 - [ ] Criar modal de conquistas

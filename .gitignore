@@ -1,0 +1,5 @@
+# Environment variables
+.env
+
+# Python bytecode's folder in root and all subfolders
+**/__pycache__/
