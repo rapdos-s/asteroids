@@ -38,7 +38,7 @@ class Game:
         print("🚀 Running Asteroids' game!")
         login: Login = Login(self.win, self.assets_dir, self.framerate)
         menu: Menu = Menu(self.win, self.assets_dir, self.framerate)
-        play: Play = Play(self.win, self.assets_dir, self.framerate)
+        # play: Play = Play(self.win, self.assets_dir, self.framerate)
         leaderboard: Leaderboard = Leaderboard(
             self.win, self.assets_dir, self.framerate
         )
@@ -62,6 +62,7 @@ class Game:
             if self.state == MAIN_MENU:
                 self.state = menu.run()
             if self.state == PLAY:
+                play: Play = Play(self.win, self.assets_dir, self.framerate)
                 self.state = play.run()
             if self.state == LEADERBOARD:
                 self.state = leaderboard.run()

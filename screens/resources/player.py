@@ -60,10 +60,10 @@ class Player:
         self.update_player()
 
     def check_location(self: object):
-        if self.x < 0 - self.width:
+        if self.x < 0 - self.height:
             self.x = self.display_width + self.width
 
-        if self.x > self.display_width + self.width:
+        if self.x > self.display_width + self.height:
             self.x = 0 - self.width
 
         if self.y < 0 - self.height:
