@@ -1,7 +1,6 @@
 from database import Database
 from game import Game
 
-
 if __name__ == "__main__":
     print("🚀 ABC | 42 Asteroids 🌑")
 
@@ -26,12 +25,12 @@ if __name__ == "__main__":
         if database.read_player(npc) is None:
             database.create_player(npc)
 
-    # player: str = database.read_player("KAREN")
-    # database.update_player("KAREN", "KAKÁ")
-    # database.delete_player("KAKÁ")
+    # # player: str = database.read_player("KAREN")
+    # # database.update_player("KAREN", "KAKÁ")
+    # # database.delete_player("KAKÁ")
 
     database.select_all_players()
-    database.commit()
+    # database.commit()
 
     game: Game = Game()
     game.run()

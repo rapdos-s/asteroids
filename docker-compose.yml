@@ -1,0 +1,17 @@
+services:
+  asteroid-database:
+    image: asteroid-database
+    build:
+      context: ./database
+      dockerfile: Dockerfile
+    env_file: .env
+    networks:
+      - asteroid
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    ports:
+      - "9090:5432"
+
+networks: 
+  asteroid: 
+    driver: bridge

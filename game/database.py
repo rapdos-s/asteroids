@@ -14,12 +14,14 @@ class Database:
         self.database_user: str = os.getenv("DATABASE_USER")
         self.database_password: str = os.getenv("DATABASE_PASSWORD")
         self.database_host: str = os.getenv("DATABASE_HOST")
+        self.database_port: str = os.getenv("DATABASE_PORT")
 
         self.database_connection: psycopg2.connect = psycopg2.connect(
             dbname=self.database_name,
             user=self.database_user,
             password=self.database_password,
             host=self.database_host,
+            port=self.database_port,
         )
 
         self.database_cursor: psycopg2._psycopg.cursor = (

@@ -1,0 +1,2 @@
+FROM postgres:14.0
+EXPOSE 5432
