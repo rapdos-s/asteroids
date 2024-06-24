@@ -1,12 +1,43 @@
 ## TO-DO
 - [x] Limpar e organizar o .gitignore
+
 - [ ] Configurar ambiente de banco de dados e jogo
-  - [ ] Banco de dados: postgreeSQL: ???
-  - [ ] Jogo: python: ???
-- [ ] Criar usuário no database (marvin)
+  - [ ] Banco de dados: postgres
+    - [x] Alterar variáveis para o padrão do postgres no .env
+    - [ ] Atualizar .env no repositório github
+  - [x] Jogo: python: fora do docker
+
+- [ ] Documentar Makefile
+  - [ ] all: Sobe o docker e executa o jogo
+  - [ ] clean: Para containers e limpa arquivos cache de jogo
+  - [ ] fclean: chama clean e Limpa objetos relacionados ao docker
+  - [ ] re: chama fclean e all
+
+  - [ ] game_run: Executa o código python do jogo
+  - [ ] install_game_requirements: Instalar dependências listadas no requirements.txt
+
+  - [ ] docker_list: Chama todos os makes que listam coisas do docker
+  - [ ] docker_fclean: Chama todos os makes que limpam coisas do docker
+  - [ ] docker_container_list: Lista todos os containers
+  - [ ] docker_container_remove: Remove todos os containers
+  - [ ] docker_volume_list: Lista todos os volumes
+  - [ ] docker_volume_remove: Remove todos os volumes
+  - [ ] docker_network_list: Lista todas as redes
+  - [ ] docker_network_remove: Remove todas as redes
+  - [ ] docker_images_list: Lista todas as imagens
+  - [ ] docker_images_remove: Remove todas as imagens
+  - [ ] docker_up: Inicia o container do banco de dados
+  - [ ] docker_down: Para o container do banco de dados
+
+  - [ ] venv_create: Cria o ambiente virtual
+  - [ ] venv_remove: Remove o ambiente virtual
+
 - [ ] Resolver bug de saída da tela
 - [ ] Criar modal de conquistas
 - [ ] CRUDs
+- [ ] Script para criar o usuário marvin
+- [ ] Script para popular o banco de dados
+- [ ] Linkar banco de dados ao volume
 
 - [ ] Criar arquivo config.py
 - [ ] Store players score

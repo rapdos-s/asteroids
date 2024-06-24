@@ -1,5 +1,4 @@
-# dir and files ################################################################
-
+# directory structure ##########################################################
 game_dir             = ./game
 venv_dir             = ./.venv
 
@@ -7,7 +6,6 @@ game                 = $(game_dir)/main.py
 requirements_file    = $(game_dir)/requirements.txt
 
 # colors #######################################################################
-
 red                  = "\033[0;31m"
 green                = "\033[0;32m"
 yellow               = "\033[0;33m"
@@ -17,42 +15,173 @@ cyan                 = "\033[0;36m"
 reset                = "\033[0m"
 
 make_tag             = [$(magenta) MAKE $(reset)]
+game_tag             = [$(green) GAME $(reset)]
+docker_tag             = [$(blue) DOCKER $(reset)]
+database_tag         = [$(yellow) DATABASE $(reset)]
+venv_tag             = [$(cyan) VENV $(reset)]
 
 # commands #####################################################################
-
 echo                 = echo -e $(make_tag)
+docker               = sudo docker
+docker-compose       = sudo docker-compose
+make                 = make --no-print-directory
 python               = python3
 pip                  = pip3
 rm                   = rm -fr
 
+remove_output        = 2> /dev/null
+
+# default goal #################################################################
 .DEFAULT_GOAL := all
 
-# rules ########################################################################
+# basic rules ##################################################################
+.PHONY: all clean fclean re
 
-all: run-database run-game stop-database
+all:
+	@$(echo) "Starting..."
+	@$(make) docker_up
+	@$(make) game_run
+	@$(echo) "All done."
 
-run-game: requirements
-	@$(echo) "Running game..."
+clean:
+	@$(echo) "Intermediate clean..."
+	@$(make) database_stop
+	@$(make) docker_container_stop
+	@$(make) game_clean
+	@$(echo) "Intermediate clean done."
+
+fclean:
+	@$(echo) "Full clean..."
+	@$(make) clean
+	@$(make) docker_fclean
+	@$(make) venv_remove
+	@$(echo) "Full clean done."
+
+re:
+	@$(echo) "Rebuilding..."
+	@$(make) fclean
+	@$(make) all
+	@$(echo) "Rebuilding done."
+
+# game rules ###################################################################
+.PHONY: game_run install_game_requirements game_clean
+
+game_run: install_game_requirements
+	@$(echo) $(game_tag) "Running game..."
 	@$(python) $(game)
+	@$(echo) $(game_tag) "Game finished."
 
-requirements:
-	@$(echo) "Installing requirements..."
+install_game_requirements:
+	@$(echo) $(game_tag) "Installing requirements..."
 	@$(pip) install --requirement $(requirements_file)
+	@$(echo) $(game_tag) "Requirements installed."
 
-run-database:
-	@$(echo) "Running database..."
-	@sudo docker-compose up --build --detach
+game_clean:
+	@$(echo) $(game_tag) "Cleaning game cache"
+	@find $(game_dir) -type d -name __pycache__ | xargs $(rm)
+	@$(echo) $(game_tag) "Game cache cleaned."
 
-stop-database:
-	@$(echo) "Stopping database..."
-	@sudo docker-compose down
+# docker rules #################################################################
+.PHONY: docker_list docker_fclean
+.PHONY: docker_container_list docker_container_stop docker_container_remove
+.PHONY: docker_volume_list docker_volume_remove
+.PHONY: docker_network_list docker_network_remove
+.PHONY: docker_images_list docker_images_remove
+.PHONY: docker_up docker_down
+
+docker_list:
+	@$(echo) $(docker_tag) "Listing all docker objects..."
+	@$(make) docker_container_list
+	@$(make) docker_volume_list
+	@$(make) docker_network_list
+	@$(make) docker_images_list
+	@$(echo) $(docker_tag) "Docker objects listing done."
+
+docker_fclean:
+	@$(echo) $(docker_tag) "Removing all docker objects..."
+	@$(make) docker_container_remove
+	@$(make) docker_volume_remove
+	@$(make) docker_network_remove
+	@$(make) docker_images_remove
+	@$(echo) $(docker_tag) "Docker objects remove done."
+
+docker_container_list:
+	@$(echo) $(docker_tag) "Listing containers..."
+	@$(docker-compose) ps --all
+	@$(echo) $(docker_tag) "Containers listing done."
+
+docker_container_stop:
+	@$(echo) $(docker_tag) "Stopping all containers..."
+	@$(docker-compose) stop
+	@$(echo) $(docker_tag) "Containers stopped."
+
+docker_container_remove:
+	@$(echo) $(docker_tag) "Removing all containers..."
+	@$(docker) ps --all --quiet | \
+		grep --quiet . && \
+		$(docker) container rm --force $$($(docker) ps --all --quiet) || \
+		$(echo) $(docker_tag) "No containers to remove."
+	@$(echo) $(docker_tag) "Containers remove done."
+
+docker_volume_list:
+	@$(echo) $(docker_tag) "Listing all volumes..."
+	@$(docker) volume ls
+	@$(echo) $(docker_tag) "Volumes listing done."
+
+docker_volume_remove:
+	@$(echo) $(docker_tag) "Removing all volumes..."
+	@$(docker) volume ls --quiet | \
+		grep --quiet . && \
+		$(docker) volume rm $$($(docker) volume ls --quiet) || \
+		$(echo) $(docker_tag) "No volumes to remove."
+	@$(echo) $(docker_tag) "Volumes remove done."
+
+docker_network_list:
+	@$(echo) $(docker_tag) "Listing all networks..."
+	@$(docker) network ls
+	@$(echo) $(docker_tag) "Networks listing done."
+
+docker_network_remove:
+	@$(echo) $(docker_tag) "Removing all networks..."
+	@$(docker) network ls --format "{{.Name}}" | \
+		grep --invert-match --extended-regexp "bridge|host|none" | \
+		xargs $(docker) network rm --force $(remove_output) && \
+		$(echo) $(docker_tag) "All networks removed." || \
+		$(echo) $(docker_tag) "No networks to remove."
+	@$(echo) $(docker_tag) "Networks remove done."
+
+docker_images_list:
+	@$(echo) $(docker_tag) "Listing all images..."
+	@$(docker) images
+	@$(echo) $(docker_tag) "Images listing done."
+
+docker_images_remove:
+	@$(echo) $(docker_tag) "Removing all images..."
+	@$(docker) images --quiet | \
+		grep --quiet . && \
+		$(docker) rmi --force $$($(docker) images --quiet) || \
+		$(echo) $(docker_tag) "No images to remove."
+	@$(echo) $(docker_tag) "Images remove done."
+
+docker_up:
+	@$(echo) $(docker_tag) "Starting docker containers..."
+	@$(docker-compose) up --build --detach
+	@$(echo) $(docker_tag) "Docker containers started."
+
+docker_down:
+	@$(echo) $(docker_tag) "Stopping docker containers..."
+	@$(docker-compose) down
+	@$(echo) $(docker_tag) "Docker containers stopped."
 
 # venv rules ###################################################################
+.PHONY: venv_create venv_remove
 
-create-venv:
-	@$(echo) "Creating virtual environment..."
+venv_create:
+	@$(echo) $(venv_tag) "Creating virtual environment..."
 	@$(python) -m venv $(venv_dir)
+	@$(echo) $(venv_tag) "Virtual environment created."
 
-remove-venv:
-	@$(echo) "Removing virtual environment..."
+venv_remove:
+	@$(echo) $(venv_tag) "Removing virtual environment..."
 	@$(rm) $(venv_dir)
+	@$(echo) $(venv_tag) "Virtual environment removed."
