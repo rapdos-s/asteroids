@@ -1,6 +1,8 @@
 import pygame
 import pygame.gfxdraw
 
+from constants import DISPLAY_WIDTH, DISPLAY_HEIGHT
+
 
 class Screen:
     def draw_rounded_rect(
@@ -37,3 +39,8 @@ class Screen:
         rect.topleft = (x, y)
 
         self.win.blit(surface, rect)
+
+    def draw_achievements(
+        self: object, icon: str, title: str, description: str
+    ) -> None:
+        print(f"🏆 {title}: {description}")

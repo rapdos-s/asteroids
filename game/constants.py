@@ -58,3 +58,7 @@ PLAYER_MOVE_SPEED: int = 4
 BULLET_SIZE: int = 5
 BULLET_SPEED: int = 15
 BULLET_COLOR: Tuple[int, int, int] = (242, 242, 142)
+
+# Database
+PLAYERS_NAME_MAX_LENGTH: int = 8
+ACHIEVEMENTS_NAME_MAX_LENGTH: int = 42

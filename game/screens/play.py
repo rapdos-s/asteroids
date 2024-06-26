@@ -57,10 +57,19 @@ class Play(Screen):
         self.game_over: bool = False
         self.asteroid_timer: int = 0
         self.debug: bool = False
+        self.asteroids_destroyed: int = 0
+
+        self.achievement_debug: bool = False
+
+    def __del__(self: object):
+        pass
 
     def run(self: object) -> int:
         self.score = 0
         self.game_over = False
+        self.asteroids_destroyed = 0
+
+        # Verifica se já jogou antes
 
         keep_running: bool = True
         return_state: int = MAIN_MENU
@@ -122,6 +131,7 @@ class Play(Screen):
                                     )
                                 )
                             self.asteroids.pop(self.asteroids.index(asteroid))
+                            self.asteroids_destroyed += 1
                         except:
                             pass
 
@@ -195,7 +205,7 @@ class Play(Screen):
         text: pygame.Surface = self.score_font.render(score_text, ANTIALIAS, WHITE)
 
         self.win.blit(text, (SCORE_X, SCORE_Y))
-        if self.limit_score % 10 == 0:
+        if self.limit_score % 10 == 0 and self.game_over == False:
             self.score += 1
         self.limit_score += 1
 
@@ -230,6 +240,14 @@ class Play(Screen):
             )
 
     def draw_debug(self: object) -> None:
+        if self.achievement_debug == False or True:
+            self.draw_achievements(
+                icon=f"{self.assets_dir}/icon.png",
+                title="What's this?",
+                description="Visualize the debug mode.",
+            )
+            self.achievement_debug = True
+
         self.player.draw_collision(self.win)
 
         for asteroid in self.asteroids:
@@ -247,6 +265,8 @@ class Play(Screen):
             f"",
             f"Player position: {self.player.get_x():.2f}, {self.player.get_y():.2f}",
             f"Player angle: {self.player.get_angle()}",
+            f"",
+            f"Asteroids destroyed: {self.asteroids_destroyed}",
         ]
 
         for text in texts:

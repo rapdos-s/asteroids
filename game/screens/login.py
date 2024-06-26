@@ -1,8 +1,8 @@
 import pygame
 
 from constants import *
-
 from screens.screen import Screen
+# from database import Database
 
 
 class Login(Screen):
@@ -17,6 +17,7 @@ class Login(Screen):
         self.framerate: int = framerate
         self.user_text: str = ""
         self.input_box = pygame.Rect(280, 285, 200, 40)
+        # self.database: Database = Database()
 
         self.background: pygame.Surface = pygame.image.load(
             f"{self.assets_dir}/full_background.png"
@@ -51,25 +52,28 @@ class Login(Screen):
         while running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    return 6
+                    return QUIT
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
-                        return 6
+                        return QUIT
 
-                if event.type == pygame.KEYDOWN and input_active:
-                    if event.key == pygame.K_RETURN:
-                        print(f"Texto inserido: {self.user_text}")
-                        if len(self.user_text):
-                            input_active = False  # Sai do modo de entrada
-                            self.user_text = ""
-                            running = False
-                    elif event.key == pygame.K_BACKSPACE:
-                        self.user_text = self.user_text[
-                            :-1
-                        ]  # Remove o último caractere
-                    else:
-                        if len(self.user_text) < 8:
-                            self.user_text += event.unicode
+        #         if event.type == pygame.KEYDOWN and input_active:
+        #             if event.key == pygame.K_RETURN:
+        #                 print(f"Texto inserido: {self.user_text}")
+        #                 if len(self.user_text):
+        #                     # if self.database.read_player(self.user_text) is None:
+        #                     #     self.database.create_player(self.user_text)
+        #                     #     self.database.commit()
+        #                     input_active = False  # Sai do modo de entrada
+        #                     self.user_text = ""
+        #                     running = False
+        #             elif event.key == pygame.K_BACKSPACE:
+        #                 self.user_text = self.user_text[
+        #                     :-1
+        #                 ]  # Remove o último caractere
+        #             else:
+        #                 if len(self.user_text) < 8:
+        #                     self.user_text += event.unicode
             if running:
                 self.draw()
 
