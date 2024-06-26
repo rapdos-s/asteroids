@@ -21,7 +21,7 @@ database_tag         = [$(yellow) DATABASE $(reset)]
 venv_tag             = [$(cyan) VENV $(reset)]
 
 # commands #####################################################################
-echo                 = echo -e $(make_tag)
+echo                 = /usr/bin/echo -e $(make_tag)
 docker               = sudo docker
 docker-compose       = sudo docker-compose
 make                 = make --no-print-directory
