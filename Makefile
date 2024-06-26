@@ -66,7 +66,7 @@ re:
 # game rules ###################################################################
 .PHONY: game_run install_game_requirements game_clean
 
-game_run: install_game_requirements
+game_run: install_game_requirements sleep
 	@$(echo) $(game_tag) "Running game..."
 	@$(python) $(game)
 	@$(echo) $(game_tag) "Game finished."
@@ -207,3 +207,8 @@ sudo:
 lsof: sudo
 	@$(echo) "Listing processes using port 5432..."
 	@sudo lsof -i :5432 || true
+
+sleep:
+	@$(echo) "☕ Making coffee..."
+	@sleep 5
+	@$(echo) "Done."
