@@ -39,13 +39,13 @@ remove_output        = 2> /dev/null
 
 all:
 	@$(echo) "Starting..."
-	@$(make) docker_up
+	@$(make) docker_up_detach
 	@$(make) game_run
 	@$(echo) "All done."
 
 clean:
 	@$(echo) "Intermediate clean..."
-	@$(make) database_stop
+	@$(make) docker_down
 	@$(make) docker_container_stop
 	@$(make) game_clean
 	@$(echo) "Intermediate clean done."
@@ -87,9 +87,9 @@ game_clean:
 .PHONY: docker_volume_list docker_volume_remove
 .PHONY: docker_network_list docker_network_remove
 .PHONY: docker_images_list docker_images_remove
-.PHONY: docker_up docker_down
+.PHONY: docker_build docker_up docker_up_detach docker_down
 
-docker_list:
+docker_list: sudo
 	@$(echo) $(docker_tag) "Listing all docker objects..."
 	@$(make) docker_container_list
 	@$(make) docker_volume_list
@@ -97,7 +97,7 @@ docker_list:
 	@$(make) docker_images_list
 	@$(echo) $(docker_tag) "Docker objects listing done."
 
-docker_fclean:
+docker_fclean: sudo
 	@$(echo) $(docker_tag) "Removing all docker objects..."
 	@$(make) docker_container_remove
 	@$(make) docker_volume_remove
@@ -105,17 +105,17 @@ docker_fclean:
 	@$(make) docker_images_remove
 	@$(echo) $(docker_tag) "Docker objects remove done."
 
-docker_container_list:
+docker_container_list: sudo
 	@$(echo) $(docker_tag) "Listing containers..."
 	@$(docker-compose) ps --all
 	@$(echo) $(docker_tag) "Containers listing done."
 
-docker_container_stop:
+docker_container_stop: sudo
 	@$(echo) $(docker_tag) "Stopping all containers..."
 	@$(docker-compose) stop
 	@$(echo) $(docker_tag) "Containers stopped."
 
-docker_container_remove:
+docker_container_remove: sudo
 	@$(echo) $(docker_tag) "Removing all containers..."
 	@$(docker) ps --all --quiet | \
 		grep --quiet . && \
@@ -123,12 +123,12 @@ docker_container_remove:
 		$(echo) $(docker_tag) "No containers to remove."
 	@$(echo) $(docker_tag) "Containers remove done."
 
-docker_volume_list:
+docker_volume_list: sudo
 	@$(echo) $(docker_tag) "Listing all volumes..."
 	@$(docker) volume ls
 	@$(echo) $(docker_tag) "Volumes listing done."
 
-docker_volume_remove:
+docker_volume_remove: sudo
 	@$(echo) $(docker_tag) "Removing all volumes..."
 	@$(docker) volume ls --quiet | \
 		grep --quiet . && \
@@ -136,12 +136,12 @@ docker_volume_remove:
 		$(echo) $(docker_tag) "No volumes to remove."
 	@$(echo) $(docker_tag) "Volumes remove done."
 
-docker_network_list:
+docker_network_list: sudo
 	@$(echo) $(docker_tag) "Listing all networks..."
 	@$(docker) network ls
 	@$(echo) $(docker_tag) "Networks listing done."
 
-docker_network_remove:
+docker_network_remove: sudo
 	@$(echo) $(docker_tag) "Removing all networks..."
 	@$(docker) network ls --format "{{.Name}}" | \
 		grep --invert-match --extended-regexp "bridge|host|none" | \
@@ -150,12 +150,12 @@ docker_network_remove:
 		$(echo) $(docker_tag) "No networks to remove."
 	@$(echo) $(docker_tag) "Networks remove done."
 
-docker_images_list:
+docker_images_list: sudo
 	@$(echo) $(docker_tag) "Listing all images..."
 	@$(docker) images
 	@$(echo) $(docker_tag) "Images listing done."
 
-docker_images_remove:
+docker_images_remove: sudo
 	@$(echo) $(docker_tag) "Removing all images..."
 	@$(docker) images --quiet | \
 		grep --quiet . && \
@@ -163,12 +163,22 @@ docker_images_remove:
 		$(echo) $(docker_tag) "No images to remove."
 	@$(echo) $(docker_tag) "Images remove done."
 
-docker_up:
+docker_build: sudo
+	@$(echo) $(docker_tag) "Building docker containers..."
+	@$(docker-compose) build
+	@$(echo) $(docker_tag) "Docker containers built."
+
+docker_up: sudo docker_build
 	@$(echo) $(docker_tag) "Starting docker containers..."
-	@$(docker-compose) up --build --detach
+	@$(docker-compose) up
 	@$(echo) $(docker_tag) "Docker containers started."
 
-docker_down:
+docker_up_detach: sudo docker_build
+	@$(echo) $(docker_tag) "Starting docker containers..."
+	@$(docker-compose) up --detach
+	@$(echo) $(docker_tag) "Docker containers started."
+
+docker_down: sudo
 	@$(echo) $(docker_tag) "Stopping docker containers..."
 	@$(docker-compose) down
 	@$(echo) $(docker_tag) "Docker containers stopped."
@@ -185,3 +195,15 @@ venv_remove:
 	@$(echo) $(venv_tag) "Removing virtual environment..."
 	@$(rm) $(venv_dir)
 	@$(echo) $(venv_tag) "Virtual environment removed."
+
+# tools rules ##################################################################
+.PHONY: sudo lsof
+
+sudo:
+	@$(echo) "Requesting sudo..."
+	@sudo true
+	@$(echo) "Sudo granted."
+
+lsof: sudo
+	@$(echo) "Listing processes using port 5432..."
+	@sudo lsof -i :5432 || true

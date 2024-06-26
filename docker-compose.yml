@@ -1,17 +1,12 @@
 services:
-  asteroid-database:
-    image: asteroid-database
-    build:
-      context: ./database
-      dockerfile: Dockerfile
-    env_file: .env
-    networks:
-      - asteroid
-    volumes:
-      - ./data:/var/lib/postgresql/data
+  postgres:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      - "9090:5432"
-
-networks: 
-  asteroid: 
-    driver: bridge
+      - "5432:5432"
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql

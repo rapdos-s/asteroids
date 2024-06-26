@@ -29,10 +29,11 @@ if __name__ == "__main__":
     # # database.update_player("KAREN", "KAKÁ")
     # # database.delete_player("KAKÁ")
 
+    database.show_all_tables()
     database.select_all_players()
     # database.commit()
 
-    game: Game = Game()
-    game.run()
+    # game: Game = Game()
+    # game.run()
 
     print("🌌 Everything is done, Bye!")
