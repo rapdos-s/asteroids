@@ -1,0 +1,10 @@
+INSERT INTO players (player_name) VALUES ('MARVIN');
+INSERT INTO players (player_name) VALUES ('KAREN');
+INSERT INTO players (player_name) VALUES ('CAIO');
+INSERT INTO players (player_name) VALUES ('TUCA');
+INSERT INTO players (player_name) VALUES ('FERNAO');
+INSERT INTO players (player_name) VALUES ('FERNANDA');
+INSERT INTO players (player_name) VALUES ('LUCAS');
+INSERT INTO players (player_name) VALUES ('KIM');
+INSERT INTO players (player_name) VALUES ('MARCEL');
+INSERT INTO players (player_name) VALUES ('MAURICIO');
