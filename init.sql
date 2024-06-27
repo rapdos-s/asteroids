@@ -10,7 +10,7 @@ CREATE TABLE leaderboard (
     player_id INT NOT NULL,
     score INT NOT NULL,
     date TIMESTAMP NOT NULL,
-    FOREIGN KEY (player_id) REFERENCES players (id)
+    FOREIGN KEY (player_id) REFERENCES players (id) ON DELETE CASCADE
 );
 
 -- Criação da tabela score_history
@@ -19,7 +19,7 @@ CREATE TABLE score_history (
     player_id INT NOT NULL,
     score INT NOT NULL,
     date TIMESTAMP NOT NULL,
-    FOREIGN KEY (player_id) REFERENCES players (id)
+    FOREIGN KEY (player_id) REFERENCES players (id) ON DELETE CASCADE
 );
 
 -- Criação da tabela achievements
@@ -35,6 +35,6 @@ CREATE TABLE player_achievements (
     achievement_id INT NOT NULL,
     date_earned TIMESTAMP NOT NULL,
     PRIMARY KEY (player_id, achievement_id),
-    FOREIGN KEY (player_id) REFERENCES players (id),
-    FOREIGN KEY (achievement_id) REFERENCES achievements (id)
+    FOREIGN KEY (player_id) REFERENCES players (id) ON DELETE CASCADE,
+    FOREIGN KEY (achievement_id) REFERENCES achievements (id) ON DELETE CASCADE
 );
