@@ -6,18 +6,26 @@ if __name__ == "__main__":
 
     database: Database = Database()
 
-    database.select_all_players()
-    print(
-        "################################################################################"
-    )
-    print("DELETE")
-    database.delete_player_by_id(1)
-    database.delete_player_by_name("CAIO")
-
     print(
         "################################################################################"
     )
     database.select_all_players()
+    print(
+        "################################################################################"
+    )
+    database.select_all_leaderboard()
+    print(
+        "################################################################################"
+    )
+    database.select_all_score_history()
+    print(
+        "################################################################################"
+    )
+    database.select_all_achievements()
+    print(
+        "################################################################################"
+    )
+    database.select_all_player_achievements()
 
     # game: Game = Game()
     # game.run()
