@@ -1,7 +1,7 @@
 -- Criação da tabela players
 CREATE TABLE players (
     id SERIAL PRIMARY KEY,
-    player_name VARCHAR(100) NOT NULL
+    player_name VARCHAR(100) NOT NULL,
 );
 
 -- Criação da tabela leaderboard

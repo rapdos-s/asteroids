@@ -46,16 +46,16 @@ class Game:
 
         # clock: pygame.time.Clock = pygame.time.Clock()
         while self.keep_running:
-        #     clock: pygame.time.Clock = pygame.time.Clock()
+            #     clock: pygame.time.Clock = pygame.time.Clock()
 
-        #     keys: pygame.key = pygame.key.get_pressed()
+            #     keys: pygame.key = pygame.key.get_pressed()
 
-        #     for event in pygame.event.get():
-        #         if event.type == pygame.QUIT:
-        #             self.keep_running = False
+            #     for event in pygame.event.get():
+            #         if event.type == pygame.QUIT:
+            #             self.keep_running = False
 
-        #     if keys[pygame.K_ESCAPE] and self.state == QUIT:
-        #         self.keep_running = False
+            #     if keys[pygame.K_ESCAPE] and self.state == QUIT:
+            #         self.keep_running = False
 
             if self.state == LOGIN:
                 self.state = login.run()
@@ -72,7 +72,7 @@ class Game:
             #     self.state = LOGIN
             # if self.state == QUIT:
             #     self.keep_running = False
-            self.keep_running = False # remover
+            self.keep_running = False  # remover
 
         if not self.keep_running:
             print("🏁 Game Closed.")

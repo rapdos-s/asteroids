@@ -209,6 +209,11 @@ lsof: sudo
 	@sudo lsof -i :5432 || true
 
 sleep:
-	@$(echo) "☕ Making coffee..."
-	@sleep 5
-	@$(echo) "Done."
+	@/usr/bin/echo -n -e $(make_tag) "☕ Making coffee"
+
+	@for i in {1..5}; do \
+		/usr/bin/echo -n "."; \
+		sleep 1; \
+	done
+
+	@/usr/bin/echo " Done!"

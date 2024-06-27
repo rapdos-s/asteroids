@@ -10,12 +10,6 @@ class Database:
         print("💾 Database connection opened.")
         load_dotenv()
 
-        print("POSTGRES_DB:", os.getenv("POSTGRES_DB"))
-        print("POSTGRES_USER:", os.getenv("POSTGRES_USER"))
-        print("POSTGRES_PASSWORD:", os.getenv("POSTGRES_PASSWORD"))
-        print("POSTGRES_HOST:", os.getenv("POSTGRES_HOST"))
-        print("POSTGRES_PORT:", os.getenv("POSTGRES_PORT"))
-
         self.database_name: str = os.getenv("POSTGRES_DB")
         self.database_user: str = os.getenv("POSTGRES_USER")
         self.database_password: str = os.getenv("POSTGRES_PASSWORD")
@@ -69,30 +63,48 @@ class Database:
     #         f"CREATE TABLE IF NOT EXISTS {table_name} ({columns});"
     #     )
 
+    # CRUD players #############################################################
+
     def create_player(self: object, player_name: str) -> None:
         self.database_cursor.execute(
             f"INSERT INTO players (player_name) VALUES ('{player_name}') ON CONFLICT DO NOTHING;"
         )
 
-    def read_player(self: object, player_name: str) -> str:
-        self.database_cursor.execute(f"SELECT * FROM players WHERE player_name = '{player_name}';")
+    def read_player_by_id(self: object, player_id: int) -> str:
+        self.database_cursor.execute(f"SELECT * FROM players WHERE id = {player_id};")
         player = self.database_cursor.fetchone()
 
         return player
 
-    def update_player(self: object, player_name: str, new_player_name: str) -> None:
+    def read_player_by_name(self: object, player_name: str) -> str:
+        self.database_cursor.execute(
+            f"SELECT * FROM players WHERE player_name = '{player_name}';"
+        )
+        player = self.database_cursor.fetchone()
+
+        return player
+
+    def update_player_by_id(self: object, player_id: int, new_player_name: str) -> None:
+        self.database_cursor.execute(
+            f"UPDATE players SET player_name = '{new_player_name}' WHERE id = {player_id};"
+        )
+
+    def update_player_by_name(
+        self: object, player_name: str, new_player_name: str
+    ) -> None:
         self.database_cursor.execute(
             f"UPDATE players SET player_name = '{new_player_name}' WHERE player_name = '{player_name}';"
         )
 
-    def delete_player(self: object, player_name: str) -> None:
-        self.database_cursor.execute(f"DELETE FROM players WHERE player_name = '{player_name}';")
+    def delete_player_by_id(self: object, player_id: int) -> None:
+        self.database_cursor.execute(f"DELETE FROM players WHERE id = {player_id};")
 
-    def select_all_players(self: object) -> None:
-        self.database_cursor.execute("SELECT * FROM players;")
-        players = self.database_cursor.fetchall()
-        for player in players:
-            print(player)
+    def delete_player_by_name(self: object, player_name: str) -> None:
+        self.database_cursor.execute(
+            f"DELETE FROM players WHERE player_name = '{player_name}';"
+        )
+
+    # Selects ##################################################################
 
     def show_all_tables(self: object) -> None:
         self.database_cursor.execute(
@@ -105,3 +117,35 @@ class Database:
         tables = self.database_cursor.fetchall()
         for table in tables:
             print(table[0])
+
+    def select_all_players(self: object) -> None:
+        self.database_cursor.execute(
+            "SELECT * FROM players ORDER BY id;"
+        )
+        players = self.database_cursor.fetchall()
+        for player in players:
+            print(player)
+
+    def select_all_leaderboard(self: object) -> None:
+        self.database_cursor.execute("SELECT * FROM leaderboard;")
+        leaderboard = self.database_cursor.fetchall()
+        for score in leaderboard:
+            print(score)
+
+    def select_all_score_history(self: object) -> None:
+        self.database_cursor.execute("SELECT * FROM score_history;")
+        score_history = self.database_cursor.fetchall()
+        for score in score_history:
+            print(score)
+
+    def select_all_achievements(self: object) -> None:
+        self.database_cursor.execute("SELECT * FROM achievements ORDER BY id;")
+        achievements = self.database_cursor.fetchall()
+        for achievement in achievements:
+            print(achievement)
+
+    def select_all_player_achievements(self: object) -> None:
+        self.database_cursor.execute("SELECT * FROM player_achievements;")
+        player_achievements = self.database_cursor.fetchall()
+        for player_achievement in player_achievements:
+            print(player_achievement)
