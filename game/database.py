@@ -28,27 +28,6 @@ class Database:
             self.database_connection.cursor()
         )
 
-        # self.create_table(
-        #     "players",
-        #     f"id SERIAL PRIMARY KEY, name VARCHAR({PLAYERS_NAME_MAX_LENGTH}) NOT NULL",
-        # )
-        # self.create_table(
-        #     "leaderboard",
-        #     "id SERIAL PRIMARY KEY, player_id INT REFERENCES players(id) ON DELETE CASCADE, score INT NOT NULL, time_played TIMESTAMP NOT NULL",
-        # )
-        # self.create_table(
-        #     "score_history",
-        #     "id SERIAL PRIMARY KEY, player_id INT REFERENCES players(id) ON DELETE CASCADE, score INT NOT NULL, time_played TIMESTAMP NOT NULL",
-        # )
-        # self.create_table(
-        #     "achievements",
-        #     f"id SERIAL PRIMARY KEY, name VARCHAR({ACHIEVEMENTS_NAME_MAX_LENGTH}) NOT NULL, description TEXT NOT NULL",
-        # )
-        # self.create_table(
-        #     "player_achievements",
-        #     "id SERIAL PRIMARY KEY, player_id INT REFERENCES players(id) ON DELETE CASCADE, achievement_id INT REFERENCES achievements(id) ON DELETE CASCADE, date_earned TIMESTAMP NOT NULL",
-        # )
-
     def __del__(self: object):
         # self.commit()
         self.database_cursor.close()
@@ -57,11 +36,6 @@ class Database:
 
     def commit(self: object) -> None:
         self.database_connection.commit()
-
-    # def create_table(self: object, table_name: str, columns: str) -> None:
-    #     self.database_cursor.execute(
-    #         f"CREATE TABLE IF NOT EXISTS {table_name} ({columns});"
-    #     )
 
     # CRUD players #############################################################
 
@@ -119,9 +93,7 @@ class Database:
             print(table[0])
 
     def select_all_players(self: object) -> None:
-        self.database_cursor.execute(
-            "SELECT * FROM players ORDER BY id;"
-        )
+        self.database_cursor.execute("SELECT * FROM players;")
         players = self.database_cursor.fetchall()
         for player in players:
             print(player)

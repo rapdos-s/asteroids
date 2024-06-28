@@ -3,3 +3,6 @@
 
 # Python bytecode's folder in root and all subfolders
 **/__pycache__/
+
+# airbyte
+airbyte/

@@ -1,0 +1,31 @@
+# made with ❤ by jchoi
+x-logging: &default-logging # regra genérica de log do docker(yaml anchor)
+  options:
+    max-size: "50m"
+    max-file: "10"
+  driver: json-file
+
+services:
+  clickhouse:
+    image: clickhouse/clickhouse-server:latest
+    logging: *default-logging # uso do yaml anchor
+    hostname: clickhouse
+    container_name: clickhouse
+    restart: unless-stopped
+    ports:
+      - "8123:8123" # http interface
+      - "9000:9000" # native client interface
+    volumes:
+      - ch_data:/var/lib/clickhouse # persistencia
+      - ch_logs:/var/log/clickhouse-server # persistencia de logs
+      - ./config/logrotate.xml:/etc/clickhouse-server/config.d/logrotate.xml # regras de rotação de logs
+      - ./init.sql:/docker-entrypoint-initdb.d/0_create_user.sql # script de criação de usuário
+    environment: # variaveis do .env do deploy
+      - CLICKHOUSE_DB=${CLICKHOUSE_DB:?error}
+      - CLICKHOUSE_USER=${CLICKHOUSE_USER:?error}
+      - CLICKHOUSE_PASSWORD=${CLICKHOUSE_PASSWORD:?error}
+      - CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT=${CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT:?error} # só importa em prod com multi-usuários
+
+volumes:
+  ch_data:
+  ch_logs:
