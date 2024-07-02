@@ -1,0 +1,20 @@
+services:
+  metabase:
+    image: metabase/metabase:latest
+    container_name: metabase
+    hostname: localhost
+    volumes:
+      - ./metabase-plugins:/plugins
+    ports:
+      - 3000:3000
+    healthcheck:
+      test: curl --fail -I http://localhost:3000/api/health || exit 1
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    networks:
+      - services-network
+
+networks:
+  services-network:
+    external: true

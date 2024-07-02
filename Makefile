@@ -2,10 +2,13 @@
 airbyte_dir          = ./airbyte
 clickhouse_dir       = ./clickhouse
 game_dir             = ./game
+metabase_dir         = ./metabase
+metabase_plugins_dir = $(metabase_dir)/metabase-plugins
 postgres_dir         = ./postgres
 
 airbyte_compose      = $(airbyte_dir)/docker-compose.yaml
 clickhouse_compose   = $(clickhouse_dir)/docker-compose.yml
+metabase_compose     = $(metabase_dir)/docker-compose.yml
 postgres_compose     = $(postgres_dir)/docker-compose.yml
 
 game                 = $(game_dir)/main.py
@@ -22,7 +25,7 @@ reset                = "\033[0m"
 
 make_tag             = [$(magenta) MAKE $(reset)]
 game_tag             = [$(green) GAME $(reset)]
-docker_tag             = [$(blue) DOCKER $(reset)]
+docker_tag           = [$(blue) DOCKER $(reset)]
 database_tag         = [$(yellow) DATABASE $(reset)]
 
 # commands #####################################################################
@@ -37,17 +40,19 @@ rm                   = rm -fr
 remove_output        = 2> /dev/null
 
 # default goal #################################################################
-.DEFAULT_GOAL := all
+.DEFAULT_GOAL        = all
 
 # basic rules ##################################################################
 .PHONY: all clean fclean re
 
 all:
 	@$(echo) "Starting..."
+	@$(make) kill_postgres
+	@$(make) create_network
 	@$(make) docker_postgres_up_detach
 	@$(make) docker_airbyte_up_detach
 	@$(make) docker_clickhouse_up_detach
-#	@$(make) docker_metabase_up_detach
+	@$(make) docker_metabase_up_detach
 	@$(make) game_run
 	@$(echo) "All done."
 
@@ -60,15 +65,15 @@ clean:
 fclean:
 	@$(echo) "Full clean..."
 	@$(make) clean
-	@$(make) kill_postgres
 	@$(make) docker_fclean
+	@$(make) kill_postgres
 	@$(echo) "Full clean done."
 
-# re:
-# 	@$(echo) "Rebuilding..."
-# 	@$(make) fclean
-# 	@$(make) all
-# 	@$(echo) "Rebuilding done."
+re:
+	@$(echo) "Rebuilding..."
+	@$(make) fclean
+	@$(make) all
+	@$(echo) "Rebuilding done."
 
 # docker rules #################################################################
 .PHONY: docker_list docker_fclean
@@ -243,6 +248,40 @@ docker_clickhouse_stop: sudo
 	@$(echo) $(docker_tag) "Clickhouse container stopped."
 
 # metabase rules ###############################################################
+.PHONY: docker_metabase_build docker_metabase_up docker_metabase_up_detach
+
+docker_metabase_build: sudo metabase_permissions
+	@$(echo) $(docker_tag) "Building metabase container..."
+	@$(docker-compose) --file $(metabase_compose) build
+	@$(echo) $(docker_tag) "Metabase container built."
+
+docker_metabase_up: sudo docker_metabase_build
+	@$(echo) $(docker_tag) "Starting metabase container..."
+	@$(docker-compose) --file $(metabase_compose) up
+	@$(echo) $(docker_tag) "Metabase container started."
+
+docker_metabase_up_detach: sudo docker_metabase_build
+	@$(echo) $(docker_tag) "Starting metabase container in detached mode..."
+	@$(docker-compose) --file $(metabase_compose) up --detach
+	@$(echo) $(docker_tag) "Metabase container started."
+
+docker_metabase_down: sudo
+	@$(echo) $(docker_tag) "Stopping metabase container..."
+	@$(docker-compose) --file $(metabase_compose) down
+	@$(echo) $(docker_tag) "Metabase container stopped."
+
+docker_metabase_stop: sudo
+	@$(echo) $(docker_tag) "Stopping metabase container..."
+	@$(docker-compose) --file $(metabase_compose) stop
+	@$(echo) $(docker_tag) "Metabase container stopped."
+
+metabase_permissions: sudo
+	@$(echo) "Setting permissions..."
+#	sudo chown -R seu_usuario:seu_grupo /caminho/para/plugins
+	@sudo chown -R 2000:2000 $(metabase_plugins_dir)
+#	@sudo chmod -R 755 $(metabase_plugins_dir)
+	@sudo chmod -R 777 $(metabase_plugins_dir)
+	@$(echo) "Permissions set."
 
 # game rules ###################################################################
 .PHONY: game_run install_game_requirements game_clean
@@ -273,11 +312,14 @@ sudo:
 lsof: sudo
 	@$(echo) "Listing processes using port 5432..."
 	@sudo lsof -i :5432 || true
+	@$(echo) "Processes listed."
 
 kill_postgres: sudo
+	@$(echo) "Killing postgres processes..."
 	@sudo lsof -t -i:5432 | \
 		grep --invert-match PID | \
 		xargs --no-run-if-empty sudo kill -9
+	@$(echo) "Postgres processes killed."
 
 sleep:
 	@/usr/bin/echo -n -e $(make_tag) "☕ Making coffee"
@@ -286,3 +328,8 @@ sleep:
 		sleep 1; \
 	done
 	@/usr/bin/echo " Done!"
+
+create_network:
+	@$(echo) "Creating network..."
+	@$(docker) network create services-network
+	@$(echo) "Network created."

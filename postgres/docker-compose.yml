@@ -2,8 +2,6 @@ services:
   postgres:
     image: postgres:latest
     restart: always
-    # env_file:
-    #   - ./../.env
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
@@ -13,3 +11,10 @@ services:
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/0_init.sql
       - ./populate.sql:/docker-entrypoint-initdb.d/1_populate.sql
+    networks:
+      - services-network
+
+networks:
+  services-network:
+    external: true
+
