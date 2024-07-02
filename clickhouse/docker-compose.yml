@@ -2,12 +2,15 @@ services:
   clickhouse:
     image: bitnami/clickhouse:latest
     environment:
+      # Permite criar um usuário sem senha
       - ALLOW_EMPTY_PASSWORD=yes
+      # Habilita o gerenciamento de acesso
       - CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT=1
     ports:
       - '8123:8123'
       - '9000:9000'
     volumes:
+      # Script para criar um usuário no Clickhouse
       - ./create_user.sql:/docker-entrypoint-initdb.d/0_create_user.sql
     networks:
       - services-network

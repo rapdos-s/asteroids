@@ -38,6 +38,7 @@ python               = python3
 rm                   = rm -fr
 
 remove_output        = 2> /dev/null
+keep_on_error        = || true
 
 # default goal #################################################################
 .DEFAULT_GOAL        = all
@@ -277,16 +278,24 @@ docker_metabase_stop: sudo
 
 metabase_permissions: sudo
 	@$(echo) "Setting permissions..."
-#	sudo chown -R seu_usuario:seu_grupo /caminho/para/plugins
 	@sudo chown -R 2000:2000 $(metabase_plugins_dir)
-#	@sudo chmod -R 755 $(metabase_plugins_dir)
 	@sudo chmod -R 777 $(metabase_plugins_dir)
 	@$(echo) "Permissions set."
 
 # game rules ###################################################################
 .PHONY: game_run install_game_requirements game_clean
 
-game_run: install_game_requirements sleep
+quick_run:
+	@$(echo) "Starting..."
+	@$(make) kill_postgres
+	@$(make) create_network
+	@$(make) docker_postgres_up_detach
+	@$(make) game_run
+	@$(echo) "All done."
+
+game_run:
+	@$(make) install_game_requirements
+	@$(make) sleep
 	@$(echo) $(game_tag) "Running game..."
 	@$(python) $(game)
 	@$(echo) $(game_tag) "Game finished."
@@ -311,7 +320,7 @@ sudo:
 
 lsof: sudo
 	@$(echo) "Listing processes using port 5432..."
-	@sudo lsof -i :5432 || true
+	@sudo lsof -i :5432 $(keep_on_error)
 	@$(echo) "Processes listed."
 
 kill_postgres: sudo
@@ -331,5 +340,5 @@ sleep:
 
 create_network:
 	@$(echo) "Creating network..."
-	@$(docker) network create services-network
+	@$(docker) network create services-network $(keep_on_error)
 	@$(echo) "Network created."

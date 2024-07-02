@@ -1,13 +1,16 @@
 services:
+  # Usado para criação de dashboards
   metabase:
     image: metabase/metabase:latest
     container_name: metabase
     hostname: localhost
     volumes:
+      # Pasta com plugin não oficial criado pela comunidade para dar suporte ao ClickHouse
       - ./metabase-plugins:/plugins
     ports:
       - 3000:3000
     healthcheck:
+      # Testa se o serviço está disponível
       test: curl --fail -I http://localhost:3000/api/health || exit 1
       interval: 15s
       timeout: 5s

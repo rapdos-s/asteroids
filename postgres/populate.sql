@@ -1,4 +1,6 @@
--- Populando a tabela players
+------- Script para popular o banco de dados
+
+-- Populando a tabela players com dados aleatórios
 INSERT INTO players (player_name) VALUES
     ('MARVIN'),
     ('KAREN'),
@@ -17,7 +19,7 @@ INSERT INTO players (player_name) VALUES
     ('RAPHAEL');
 
 
--- Populando a tabela leaderborad
+-- Populando a tabela leaderborad com dados aleatórios
 INSERT INTO leaderboard (player_id, score, date)
 VALUES 
     (1, 43895, '2024-06-19 10:00:00'),
@@ -37,7 +39,7 @@ VALUES
     (15, 6875, '2024-06-28 00:00:00');
 
 
--- Populando a tabela score_history
+-- Populando a tabela score_history com dados aleatórios
 INSERT INTO score_history (player_id, score, date) VALUES
     (1, 38565, '2024-05-18 14:00:00'),
     (2, 35740, '2024-05-22 17:00:00'),
@@ -81,7 +83,7 @@ INSERT INTO score_history (player_id, score, date) VALUES
     (15, 6875, '2024-06-28 00:00:00');
 
 
---  Populando a tabela achievements
+--  Populando a tabela achievements com dados aleatórios
 INSERT INTO achievements (achievement_name, description) VALUES
     ('Jogar 1 vez', 'Conquista obtida ao jogar o jogo pela primeira vez.'),
     ('1000 Pontos', 'Conquista obtida ao alcançar 1000 pontos no jogo.'),
@@ -93,7 +95,7 @@ INSERT INTO achievements (achievement_name, description) VALUES
 
 
 
--- Populando a tabela players_achievements
+-- Populando a tabela players_achievements com dados aleatórios
 INSERT INTO player_achievements (player_id, achievement_id, date_earned) VALUES
     (1, 1, '2024-06-25 14:00:00'),
     (1, 2, '2024-06-26 16:00:00'),

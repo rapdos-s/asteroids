@@ -2,6 +2,7 @@ services:
   postgres:
     image: postgres:latest
     restart: always
+    # Variáveis usadas do .env usadas pelo postgres para criar o banco e o usuário do banco
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
@@ -9,7 +10,9 @@ services:
     ports:
       - "5432:5432"
     volumes:
+      # Script para criação das tabelas do banco de dados
       - ./init.sql:/docker-entrypoint-initdb.d/0_init.sql
+      # Script para popular o banco de dados
       - ./populate.sql:/docker-entrypoint-initdb.d/1_populate.sql
     networks:
       - services-network
@@ -17,4 +20,3 @@ services:
 networks:
   services-network:
     external: true
-
